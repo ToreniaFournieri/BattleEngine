@@ -13,7 +13,7 @@ namespace BattleEngine
             // Battle environment setting
             int numberOfCharacters = 14;
             int battleWavesSets = 1;
-            int battleWaves = 100; // one set of battle 
+            int battleWaves = 1; // one set of battle 
 
             //BattleWaveSet variables
             double allyAttackMagnificationPerWavesSet = 0.20;

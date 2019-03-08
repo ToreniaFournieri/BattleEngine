@@ -15,6 +15,8 @@ namespace BattleEngine
             int battleWavesSets = 1;
             int battleWaves = 1; // one set of battle 
 
+            //test
+
             //BattleWaveSet variables
             double allyAttackMagnificationPerWavesSet = 0.20;
             double allyDefenseMagnificationPerWavesSet = 0.20;
@@ -117,7 +119,7 @@ namespace BattleEngine
              majestyAttackType: AttackType.any, critical: CriticalOrNot.any, whoCrushed: ActorOrTargetUnit.no, onlyWhenBeenHitMoreThanOnce: false, onlyWhenAvoidMoreThanOnce: false);
             TriggerTargetClass triggerTargetCounter = new TriggerTargetClass(actionType: ActionType.any, afterAllMoved: true, counter: true, chain: true, reAttack: true, heal: false, move: true,
              majestyAttackType: AttackType.any, critical: CriticalOrNot.nonCritical, whoCrushed: ActorOrTargetUnit.no, onlyWhenBeenHitMoreThanOnce: true, onlyWhenAvoidMoreThanOnce: false);
-            TriggerTargetClass triggerTargetChain = new TriggerTargetClass(actionType: ActionType.counter, afterAllMoved: false, counter: false, chain: true, reAttack: false, heal: false, move: true,
+            TriggerTargetClass triggerTargetChainCounter = new TriggerTargetClass(actionType: ActionType.counter, afterAllMoved: false, counter: true, chain: false, reAttack: false, heal: false, move: true,
              majestyAttackType: AttackType.any, critical: CriticalOrNot.any, whoCrushed: ActorOrTargetUnit.no, onlyWhenBeenHitMoreThanOnce: false, onlyWhenAvoidMoreThanOnce: false);
             TriggerTargetClass triggerTargetCriticalReAttack = new TriggerTargetClass(actionType: ActionType.any, afterAllMoved: true, counter: false, chain: true, reAttack: false, heal: false, move: true,
              majestyAttackType: AttackType.any, critical: CriticalOrNot.critical, whoCrushed: ActorOrTargetUnit.no, onlyWhenBeenHitMoreThanOnce: false, onlyWhenAvoidMoreThanOnce: false);
@@ -147,7 +149,7 @@ namespace BattleEngine
              triggerBase: triggerPossibilityBasic, magnification: magnificationSingleD05N05CR05AC05,
                  triggerTarget: triggerTargetCounter, buffTarget: buffTargetNone, callingBuffName: SkillName.none, debuffTarget: debuffTargetNone);
             skillsMasters[2] = new SkillsMasterStruct(name: SkillName.ChainAllysCounter, actionType: ActionType.chain, callSkillLogicName: CallSkillLogicName.none, isHeal: false, usageCount: 6, veiledTurn: 20, ability: Ability.responsiveness,
-             triggerBase: triggerPossibilityNormal, magnification: magnificationMultiD075N05CR05AC05, triggerTarget: triggerTargetChain, buffTarget: buffTargetNone, callingBuffName: SkillName.none,
+             triggerBase: triggerPossibilityNormal, magnification: magnificationMultiD075N05CR05AC05, triggerTarget: triggerTargetChainCounter, buffTarget: buffTargetNone, callingBuffName: SkillName.none,
              debuffTarget: debuffTargetNone);
             skillsMasters[3] = new SkillsMasterStruct(name: SkillName.FutureSightShot, actionType: ActionType.move, callSkillLogicName: CallSkillLogicName.none, isHeal: false, usageCount: 6, veiledTurn: 20, ability: Ability.power,
              triggerBase: triggerPossibilityNormal, magnification: magnificationMultiD10N10CR15AC20, triggerTarget: triggerTargetIndependent, buffTarget: buffTargetNone, callingBuffName: SkillName.none,
@@ -628,9 +630,7 @@ namespace BattleEngine
                         { matchedActionTypeEffects = rawActionTypeEffects.FindAll(obj => obj.Character.Affiliation == attackerOrder.Actor.Affiliation && obj.Character.Feature.DamageControlAssist == true); }
                     }
                     break;
-                default:
-                    matchedActionTypeEffects = new List<EffectClass>();
-                    break;
+                default: matchedActionTypeEffects = new List<EffectClass>(); break;
             }
 
             //push order from slow character's effect to fast character's effect. It means pop from fast character's effect to slow character's effect.
@@ -648,6 +648,7 @@ namespace BattleEngine
                     List<OrderClass> checkOrders = orders.ToList();
                     if (checkOrders.FindLast((obj) => obj.Actor == effect.Character && obj.SkillEffectChosen.Skill.Name == SkillName.normalAttack) == null) { continue; }// no normalAttack left, whitch means no action.   
                 }
+
 
                 if (effect.Skill.ActionType == ActionType.move && effect.IsDamageControlAssistAble) //Damage Control Assist Special Logic....
                 {
@@ -676,19 +677,12 @@ namespace BattleEngine
                     if (effect.Skill.TriggerTarget.Critical == CriticalOrNot.nonCritical && battleResult.CriticalOrNot == CriticalOrNot.critical) { continue; } // critical but only when non critical triggers
                 }
 
+
+
                 //ActorOrTargetUnit WhoCrushed   NO IMPLEMENTATION.
 
-                if (effect.Skill.TriggerTarget.OnlyWhenBeenHitMoreThanOnce) // Been hit trigger check.
-                {
-                    BattleUnit checkCharacter = battleResult.HitMoreThanOnceCharacters.Find((obj) => obj == effect.Character);
-                    if (checkCharacter == null) { continue; }//this means not hit, so skill should not be triggered.
-                }
-
-                if (effect.Skill.TriggerTarget.OnlyWhenAvoidMoreThanOnce) // Been avoid trigger check.
-                {
-                    BattleUnit checkCharacter = battleResult.AvoidMoreThanOnceCharacters.Find((obj) => obj == effect.Character);
-                    if (checkCharacter != null) { continue; }//this means not hit, so skill should not be triggered.
-                }
+                if (effect.Skill.TriggerTarget.OnlyWhenBeenHitMoreThanOnce && (battleResult.HitMoreThanOnceCharacters.Find((obj) => obj == effect.Character) == null)) { continue; } //Being hit .this means not hit, so skill should not be triggered.
+                if (effect.Skill.TriggerTarget.OnlyWhenAvoidMoreThanOnce && ((battleResult.AvoidMoreThanOnceCharacters.Find((obj) => obj == effect.Character)) == null)) { continue; } //being avoid. this means not hit, so skill should not be triggered.
 
                 switch (effect.Skill.TriggerBase.AccumulationReference) //Trigger Accumulation check
                 {
@@ -915,10 +909,8 @@ triggeredPossibility: TriggerPossibilityRate(skillsMaster: skillsMasters[11], ch
                     }
                     log += "\n";
                     break;
-                case TargetType.none:
-                    break;
-                default:
-                    break;
+                case TargetType.none: break;
+                default: break;
             }
 
             if (order.SkillEffectChosen.Skill.DebuffTarget.TargetType != TargetType.none)
@@ -958,10 +950,8 @@ triggeredPossibility: TriggerPossibilityRate(skillsMaster: skillsMasters[11], ch
 
             switch (order.SkillEffectChosen.Skill.Magnification.AttackTarget)
             {
-                case TargetType.self:
-                    break;
-                case TargetType.none:
-                    break;
+                case TargetType.self: break;
+                case TargetType.none: break;
                 default:
                     basicAttack = new BasicAttackFunction(order: order, characters: characters, r: r);
                     battleResult = basicAttack.BattleResult;

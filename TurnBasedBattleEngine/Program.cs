@@ -15,8 +15,6 @@ namespace BattleEngine
             int battleWavesSets = 1;
             int battleWaves = 1; // one set of battle 
 
-            //test
-
             //BattleWaveSet variables
             double allyAttackMagnificationPerWavesSet = 0.20;
             double allyDefenseMagnificationPerWavesSet = 0.20;
@@ -530,11 +528,11 @@ namespace BattleEngine
                     logPerWavesSets[battleWavesSet - 1] += "[Best shot] Waves: " + bestFirstBloodEnemy.BattleWave + " " + bestFirstBloodEnemy.EnemyContentText + "\n";
                 }
                 //Characters Statistics Collection
-                foreach (BattleUnit character in characters) { character.StatisticsCollection.Avarage(battleWaves: battleWaves); } // Avarage Calculation
+                foreach (BattleUnit character in characters) { character.Statistics.Avarage(battleWaves: battleWaves); } // Avarage Calculation
                 logPerWavesSets[battleWavesSet - 1] += "Avarage (critical):\n";
-                foreach (BattleUnit character in characters) { logPerWavesSets[battleWavesSet - 1] += new string(' ', 1) + character.Name + " " + character.StatisticsCollection.AllCriticalRatio() + "\n"; }
+                foreach (BattleUnit character in characters) { logPerWavesSets[battleWavesSet - 1] += new string(' ', 1) + character.Name + " " + character.Statistics.AllCriticalRatio() + "\n"; }
                 logPerWavesSets[battleWavesSet - 1] += "Avarage Skill:\n";
-                foreach (BattleUnit character in characters) { logPerWavesSets[battleWavesSet - 1] += character.Name + " " + character.StatisticsCollection.Skill() + "\n"; }
+                foreach (BattleUnit character in characters) { logPerWavesSets[battleWavesSet - 1] += character.Name + " " + character.Statistics.Skill() + "\n"; }
                 logPerWavesSets[battleWavesSet - 1] += "------------------------------------\n";
 
 
@@ -619,11 +617,7 @@ namespace BattleEngine
                         // Actor's affiliation character is dead just now?
                         List<BattleUnit> crushedJustNowCounterAffiliationCharacter = characters.FindAll(obj => obj.IsCrushedJustNow == true && obj.Affiliation == counterAffiliation);
                         if (crushedJustNowCounterAffiliationCharacter.Count > 0) // Damage Control Assist required!
-                        {
-                            matchedActionTypeEffects = rawActionTypeEffects.FindAll(obj => obj.Character.Affiliation == counterAffiliation && obj.Character.Feature.DamageControlAssist == true);
-                            Console.WriteLine(turn + " DMC needed! :" + attackerOrder.Actor.Name + " with " + attackerOrder.SkillEffectChosen.Skill.Name + " " + matchedActionTypeEffects.Count);
-                        }
-
+                        { matchedActionTypeEffects = rawActionTypeEffects.FindAll(obj => obj.Character.Affiliation == counterAffiliation && obj.Character.Feature.DamageControlAssist == true); }
                         // incase of friendly fired.
                         List<BattleUnit> crushedJustNowbyFriendlyFiredCharacter = characters.FindAll(obj => obj.IsCrushedJustNow == true && obj.Affiliation == attackerOrder.Actor.Affiliation);
                         if (crushedJustNowbyFriendlyFiredCharacter.Count > 0)
@@ -656,8 +650,7 @@ namespace BattleEngine
                     if (effect.Skill.TriggerTarget.AfterAllMoved == false)
                     {
                         List<OrderClass> checkActionOrders = orders.ToList();
-                        if (checkActionOrders.FindLast((obj) => obj.Actor == effect.Character && obj.ActionType == ActionType.move) == null)
-                        { continue; }// no normalAttack left, whitch means no action.   
+                        if (checkActionOrders.FindLast((obj) => obj.Actor == effect.Character && obj.ActionType == ActionType.move) == null) { continue; }// no normalAttack left, whitch means no action.   
                     }
                 }
 
@@ -678,7 +671,6 @@ namespace BattleEngine
                 }
 
 
-
                 //ActorOrTargetUnit WhoCrushed   NO IMPLEMENTATION.
 
                 if (effect.Skill.TriggerTarget.OnlyWhenBeenHitMoreThanOnce && (battleResult.HitMoreThanOnceCharacters.Find((obj) => obj == effect.Character) == null)) { continue; } //Being hit .this means not hit, so skill should not be triggered.
@@ -687,13 +679,13 @@ namespace BattleEngine
                 switch (effect.Skill.TriggerBase.AccumulationReference) //Trigger Accumulation check
                 {
                     case ReferenceStatistics.none: break;
-                    case ReferenceStatistics.AvoidCount: if (effect.Character.StatisticsCollection.AvoidCount < effect.NextAccumulationCount) { continue; } break;
-                    case ReferenceStatistics.AllHitCount: if (effect.Character.StatisticsCollection.AllHitCount < effect.NextAccumulationCount) { continue; } break;
-                    case ReferenceStatistics.AllTotalBeenHitCount: if (effect.Character.StatisticsCollection.AllTotalBeenHitCount < effect.NextAccumulationCount) { continue; } break;
-                    case ReferenceStatistics.CriticalBeenHitCount: if (effect.Character.StatisticsCollection.CriticalBeenHitCount < effect.NextAccumulationCount) { continue; } break;
-                    case ReferenceStatistics.CriticalHitCount: if (effect.Character.StatisticsCollection.CriticalHitCount < effect.NextAccumulationCount) { continue; } break;
-                    case ReferenceStatistics.SkillBeenHitCount: if (effect.Character.StatisticsCollection.SkillBeenHitCount < effect.NextAccumulationCount) { continue; } break;
-                    case ReferenceStatistics.SkillHitCount: if (effect.Character.StatisticsCollection.SkillHitCount < effect.NextAccumulationCount) { continue; } break;
+                    case ReferenceStatistics.AvoidCount: if (effect.Character.Statistics.AvoidCount < effect.NextAccumulationCount) { continue; } break;
+                    case ReferenceStatistics.AllHitCount: if (effect.Character.Statistics.AllHitCount < effect.NextAccumulationCount) { continue; } break;
+                    case ReferenceStatistics.AllTotalBeenHitCount: if (effect.Character.Statistics.AllTotalBeenHitCount < effect.NextAccumulationCount) { continue; } break;
+                    case ReferenceStatistics.CriticalBeenHitCount: if (effect.Character.Statistics.CriticalBeenHitCount < effect.NextAccumulationCount) { continue; } break;
+                    case ReferenceStatistics.CriticalHitCount: if (effect.Character.Statistics.CriticalHitCount < effect.NextAccumulationCount) { continue; } break;
+                    case ReferenceStatistics.SkillBeenHitCount: if (effect.Character.Statistics.SkillBeenHitCount < effect.NextAccumulationCount) { continue; } break;
+                    case ReferenceStatistics.SkillHitCount: if (effect.Character.Statistics.SkillHitCount < effect.NextAccumulationCount) { continue; } break;
                     default: break;
                 }
 
@@ -866,13 +858,13 @@ triggeredPossibility: TriggerPossibilityRate(skillsMaster: skillsMasters[11], ch
                         switch (order.SkillEffectChosen.Skill.TriggerBase.AccumulationReference)
                         {
                             case ReferenceStatistics.none: break;
-                            case ReferenceStatistics.AvoidCount: count = order.Actor.StatisticsCollection.AvoidCount; break;
-                            case ReferenceStatistics.AllHitCount: count = order.Actor.StatisticsCollection.AllHitCount; break;
-                            case ReferenceStatistics.AllTotalBeenHitCount: count = order.Actor.StatisticsCollection.AllTotalBeenHitCount; break;
-                            case ReferenceStatistics.CriticalBeenHitCount: count = order.Actor.StatisticsCollection.CriticalBeenHitCount; break;
-                            case ReferenceStatistics.CriticalHitCount: count = order.Actor.StatisticsCollection.CriticalHitCount; break;
-                            case ReferenceStatistics.SkillBeenHitCount: count = order.Actor.StatisticsCollection.SkillBeenHitCount; break;
-                            case ReferenceStatistics.SkillHitCount: count = order.Actor.StatisticsCollection.SkillHitCount; break;
+                            case ReferenceStatistics.AvoidCount: count = order.Actor.Statistics.AvoidCount; break;
+                            case ReferenceStatistics.AllHitCount: count = order.Actor.Statistics.AllHitCount; break;
+                            case ReferenceStatistics.AllTotalBeenHitCount: count = order.Actor.Statistics.AllTotalBeenHitCount; break;
+                            case ReferenceStatistics.CriticalBeenHitCount: count = order.Actor.Statistics.CriticalBeenHitCount; break;
+                            case ReferenceStatistics.CriticalHitCount: count = order.Actor.Statistics.CriticalHitCount; break;
+                            case ReferenceStatistics.SkillBeenHitCount: count = order.Actor.Statistics.SkillBeenHitCount; break;
+                            case ReferenceStatistics.SkillHitCount: count = order.Actor.Statistics.SkillHitCount; break;
                             default: break;
                         }
                         string nextText = null;
@@ -923,8 +915,7 @@ triggeredPossibility: TriggerPossibilityRate(skillsMaster: skillsMasters[11], ch
         public static string SkillLogicDispatcher(OrderClass order, List<BattleUnit> characters, Random r)
         {
             string log = null;
-            // check call skill 
-            if (order.SkillEffectChosen.Skill.CallSkillLogicName == CallSkillLogicName.none) { return null; }
+            if (order.SkillEffectChosen.Skill.CallSkillLogicName == CallSkillLogicName.none) { return null; } // check call skill 
             SkillLogicShieldHealClass healMulti;
             switch (order.SkillEffectChosen.Skill.CallSkillLogicName)
             {
@@ -1077,7 +1068,7 @@ triggeredPossibility: TriggerPossibilityRate(skillsMaster: skillsMasters[11], ch
             this.IsBarrierExistJustBefore = false;
             this.IsCrushedJustNow = false;
             this.IsAvoidMoreThanOnce = false;
-            this.StatisticsCollection = new StatisticsCollectionClass();
+            this.Statistics = new StatisticsCollectionClass();
         }
 
 
@@ -1348,7 +1339,7 @@ triggeredPossibility: TriggerPossibilityRate(skillsMaster: skillsMasters[11], ch
         public bool IsCrushedJustNow { get; set; }
         public bool IsAvoidMoreThanOnce { get; set; }
         public double Deterioration { get; set; }
-        public StatisticsCollectionClass StatisticsCollection { get; set; }
+        public StatisticsCollectionClass Statistics { get; set; }
     }
 
     public class EffectClass
@@ -1454,26 +1445,22 @@ triggeredPossibility: TriggerPossibilityRate(skillsMaster: skillsMasters[11], ch
                 {
                     List<BattleUnit> healTargets;
                     List<EffectClass> fillteredEffectList = null;
-                    //(1)Damage control assist is requred?
-                    if (IsDamageControlAssist)
+                    if (IsDamageControlAssist) //(1)Damage control assist is requred?
                     {
                         healTargets = characters.ToList().FindAll((obj) => obj.Affiliation == this.Actor.Affiliation && obj.Combat.HitPointCurrent == 0 && obj.IsCrushedJustNow == true);
                         healTargets.Sort((x, y) => y.Combat.HitPointCurrent - x.Combat.HitPointCurrent);
                     }
-                    else // non Damage control assisted.
+                    else // non Damage control assisted. //(2)heal expected?
                     {
-                        //(2)heal expected?
-                        healTargets = characters.ToList().FindAll((obj) => obj.Combat.ShiledCurrent == 0 && obj.Affiliation == this.Actor.Affiliation
-                                     && obj.Combat.HitPointCurrent > 0);
+                        healTargets = characters.ToList().FindAll((obj) => obj.Combat.ShiledCurrent == 0 && obj.Affiliation == this.Actor.Affiliation && obj.Combat.HitPointCurrent > 0);
                         healTargets.Sort((x, y) => y.Combat.HitPointCurrent - x.Combat.HitPointCurrent);
                     }
 
-                    //If (1)damage control assisted or (2)heal is expected, check skill proposed.
-                    // 0 shiled and low HitPoint character should heal first
-                    if (healTargets.Count >= 2)
-                    { //Multi heal reccomended
+                    //If (1)damage control assisted or (2)heal is expected, check skill proposed. 0 shiled and low HitPoint character should heal first
+                    if (healTargets.Count >= 2)//Multi heal reccomended
+                    {
                         fillteredEffectList = validEffects.FindAll(obj => obj.Skill.CallSkillLogicName == CallSkillLogicName.ShieldHealMulti);
-                        //Something wise way to chose best skill.
+                        //Something wise way to chose best skill...
 
                         // multi - ShieldHealMulti is not expected now..
                         if (fillteredEffectList.Count > 0)
@@ -1546,18 +1533,16 @@ triggeredPossibility: TriggerPossibilityRate(skillsMaster: skillsMasters[11], ch
         public BasicAttackFunction(OrderClass order, List<BattleUnit> characters, Random r)
         {
             this.BattleResult = new BattleResultClass();
-            int totalDealtDamageSum = 0;
             // Target control
-            Affiliation toTargetAffiliation;
-            if (order.Actor.Affiliation == Affiliation.ally) { toTargetAffiliation = Affiliation.enemy; } //ally's move, so target should be enemy, without confusion.
+            Affiliation toTargetAffiliation; if (order.Actor.Affiliation == Affiliation.ally) { toTargetAffiliation = Affiliation.enemy; } //ally's move, so target should be enemy, without confusion.
             else { toTargetAffiliation = Affiliation.ally; } //enemy's move, so target should be ally, without confusuion.
 
             // Initialize battle environment: Hit, Failed Hit, Damage for each opponent.
+            int totalDealtDamageSum = 0;
             int numberOfHitTotal = 0;
             int numberOfSuccessAttacks = 0;
             List<BattleUnit> opponents = characters.FindAll(character1 => character1.Affiliation == toTargetAffiliation && character1.Combat.HitPointCurrent > 0);
-            // reset IsCrushedJustNow flag
-            foreach (BattleUnit character in characters) { if (character.IsCrushedJustNow) { character.IsCrushedJustNow = false; } }
+            foreach (BattleUnit character in characters) { if (character.IsCrushedJustNow) { character.IsCrushedJustNow = false; } } // reset IsCrushedJustNow flag
 
             // no enemy anymore.
             bool invalidAction = false || opponents.Count == 0;
@@ -1565,8 +1550,6 @@ triggeredPossibility: TriggerPossibilityRate(skillsMaster: skillsMasters[11], ch
             //Ally alive list
             List<BattleUnit> aliveAttackerSide = characters.FindAll(character1 => character1.Affiliation == order.Actor.Affiliation && character1.Combat.HitPointCurrent > 0);
             int aliveAttackerIndex = aliveAttackerSide.IndexOf(order.Actor);
-            //int aliveAttackerIndex = Array.IndexOf(aliveAttackerSide, attacker);
-
             if (aliveAttackerIndex == -1) { invalidAction = true; }// in case attacker is dead.
 
             if (invalidAction == false)
@@ -1605,20 +1588,13 @@ triggeredPossibility: TriggerPossibilityRate(skillsMaster: skillsMasters[11], ch
                 }
 
                 //Critical control
-                int criticalReduction = 0;
-                if (order.Actor.Combat.CriticalHit >= r.Next(0, 100)) //Critical hit!
-                {
-                    criticalReduction = 50;
-                    this.BattleResult.CriticalOrNot = CriticalOrNot.critical;
-                }
+                int criticalReduction = 0; if (order.Actor.Combat.CriticalHit >= r.Next(0, 100))
+                { criticalReduction = 50; this.BattleResult.CriticalOrNot = CriticalOrNot.critical; }
+                else { this.BattleResult.CriticalOrNot = CriticalOrNot.nonCritical; } //Critical hit!
 
-                //Dacay difinition
-                double decayAccuracy = 0.55 + 0.01 * order.Actor.Ability.Precision;
-                double decayDamage = 0.55 + 0.01 * order.Actor.Ability.Power;
-
-                //Decay Cap contorol 
-                if (decayAccuracy > 0.99) { decayAccuracy = 0.99; }
-                if (decayDamage > 0.99) { decayDamage = 0.99; }
+                //Dacay difinition & Decay cap control
+                double decayAccuracy = 0.55 + 0.01 * order.Actor.Ability.Precision; if (decayAccuracy > 0.99) { decayAccuracy = 0.99; }
+                double decayDamage = 0.55 + 0.01 * order.Actor.Ability.Power; if (decayDamage > 0.99) { decayDamage = 0.99; }
 
                 // Minimum range - ally's column , Max range - ally's column
                 int minTargetOptimumRange = (int)(order.Actor.Combat.MinRange * skillMagnificationOptimumRangeMin) - aliveAttackerIndex;
@@ -1628,8 +1604,7 @@ triggeredPossibility: TriggerPossibilityRate(skillsMaster: skillsMasters[11], ch
                 for (int i = 0; i < characters.Count; i++)
                 {
                     if (characters[i].IsBarrierBrokenJustNow) { characters[i].IsBarrierBrokenJustNow = false; }
-                    if (characters[i].Buff.BarrierRemaining > 0)
-                    { if (characters[i].IsBarrierExistJustBefore == false) { characters[i].IsBarrierExistJustBefore = true; } }
+                    if (characters[i].Buff.BarrierRemaining > 0) { if (characters[i].IsBarrierExistJustBefore == false) { characters[i].IsBarrierExistJustBefore = true; } }
                     else { if (characters[i].IsBarrierExistJustBefore) { characters[i].IsBarrierExistJustBefore = false; } }
                     if (characters[i].IsAvoidMoreThanOnce) { characters[i].IsAvoidMoreThanOnce = false; }
                 }
@@ -1638,7 +1613,6 @@ triggeredPossibility: TriggerPossibilityRate(skillsMaster: skillsMasters[11], ch
 
                 for (int numberOfAttacks = 1; numberOfAttacks <= (int)(order.Actor.Combat.NumberOfAttacks * skillMagnificationNumberOfAttacks); numberOfAttacks++)
                 {
-
                     //Target individual oppornet per each number of attack.
                     int tickets = 0;
                     List<BattleUnit> survivaledOpponents = opponents.FindAll(character1 => character1.Combat.HitPointCurrent > 0);
@@ -1661,26 +1635,19 @@ triggeredPossibility: TriggerPossibilityRate(skillsMaster: skillsMasters[11], ch
                                     optimumTargetBonus = optimumTargetRatio / (1 + maxTargetOptimumRange - minTargetOptimumRange);
                                     survivaledOpponents[opponent - 1].IsOptimumTarget = true;
                                 }
-                                else
-                                { survivaledOpponents[opponent - 1].IsOptimumTarget = false; }
+                                else { survivaledOpponents[opponent - 1].IsOptimumTarget = false; }
                                 int targetPossibilityTicket = (int)((basicTargetRatio / Math.Pow(2.0, opponent) + optimumTargetBonus) * 50);
-
                                 targetPossibilityTicket += (int)(survivaledOpponents[opponent - 1].Feature.HateCurrent);// add Hate value 
                                 if (targetPossibilityTicket == 0) { targetPossibilityTicket = 1; }//at leaset one chance to hit.
-
-                                //Put tickets into Box with opponent column number (expected: column recalculated when they crushed)
-                                for (int ticket = tickets; ticket <= targetPossibilityTicket + tickets; ticket++)
-                                { targetPossibilityBox.Add(opponent - 1); }
+                                for (int ticket = tickets; ticket <= targetPossibilityTicket + tickets; ticket++) { targetPossibilityBox.Add(opponent - 1); } //Put tickets into Box with opponent column number (expected: column recalculated when they crushed)
                                 tickets += targetPossibilityTicket;
                             }
                         }
                         else { tickets = totalTickets; }// get previous total tickets
-
                         int index = r.Next(0, tickets);
                         targetColumn = targetPossibilityBox[index];
                         totalTickets = tickets;
                         toTarget = survivaledOpponents[targetColumn];
-
                     }
                     else if (order.SkillEffectChosen.Skill.Magnification.AttackTarget == TargetType.single)// if individual target exist, choose he/she.
                     { toTarget = opponents.Find(character1 => character1.UniqueID == order.IndividualTargetID); }
@@ -1699,7 +1666,7 @@ triggeredPossibility: TriggerPossibilityRate(skillsMaster: skillsMasters[11], ch
                         if (hitPossibility <= r.NextDouble()) //Failed!
                         {
                             if (toTarget.IsAvoidMoreThanOnce == false) { toTarget.IsAvoidMoreThanOnce = true; }
-                            toTarget.StatisticsCollection.AvoidCount++;
+                            toTarget.Statistics.AvoidCount++;
                         }
                         else //success!
                         {
@@ -1745,17 +1712,10 @@ triggeredPossibility: TriggerPossibilityRate(skillsMaster: skillsMasters[11], ch
                              + order.Actor.Combat.ChemicalAttackRatio * order.Actor.OffenseMagnification.Chemical * toTarget.DefenseMagnification.Chemical * skillMagnificationChemical
                              + order.Actor.Combat.ThermalAttackRatio * order.Actor.OffenseMagnification.Thermal * toTarget.DefenseMagnification.Thermal * skillMagnificationThermal;
 
-                            double optimumRangeBonus = 1.0;
-                            if (toTarget.IsOptimumTarget) { optimumRangeBonus = order.Actor.OffenseMagnification.OptimumRangeBonus; } //Consider optimum range bonus.
-                            double barrierReduction = 1.0;
-
-                            if (toTarget.Buff.RemoveBarrier()) // Barrier check, true: barrier has, false no barrier.
-                            {
-                                barrierReduction = 1.0 / 3.0;
-                                if (toTarget.Buff.BarrierRemaining <= 0) { toTarget.IsBarrierBrokenJustNow = true; }
-                            }
-                            else // if barrier is broken within this action, broken check.
-                            { if (toTarget.IsBarrierExistJustBefore && toTarget.IsBarrierBrokenJustNow == false) { toTarget.IsBarrierBrokenJustNow = true; } }
+                            double optimumRangeBonus = 1.0; if (toTarget.IsOptimumTarget) { optimumRangeBonus = order.Actor.OffenseMagnification.OptimumRangeBonus; } //Consider optimum range bonus.
+                            double barrierReduction = 1.0; if (toTarget.Buff.RemoveBarrier()) // Barrier check, true: barrier has, false no barrier.
+                            { barrierReduction = 1.0 / 3.0; if (toTarget.Buff.BarrierRemaining <= 0) { toTarget.IsBarrierBrokenJustNow = true; } }
+                            else { if (toTarget.IsBarrierExistJustBefore && toTarget.IsBarrierBrokenJustNow == false) { toTarget.IsBarrierBrokenJustNow = true; } } // if barrier is broken within this action, broken check.
 
                             double buffDamageMagnification = order.Actor.Buff.AttackMagnification / toTarget.Buff.DefenseMagnification; // Buff damage reduction
                             int dealtDamage = (int)((attackDamage) * damageTypeMagnification * vsOffenseMagnification * vsDeffenseMagnification
@@ -1781,7 +1741,7 @@ triggeredPossibility: TriggerPossibilityRate(skillsMaster: skillsMasters[11], ch
                                     toTarget.IsCrushedJustNow = true;
                                     isNeedCreateTargetPossibilityBox = true;
                                     BattleResult.NumberOfCrushed++;
-                                    toTarget.StatisticsCollection.NumberOfCrushed++;
+                                    toTarget.Statistics.NumberOfCrushed++;
                                 }
                             }
                             totalDealtDamages[toTarget.UniqueID] += dealtDamage;
@@ -1802,48 +1762,42 @@ triggeredPossibility: TriggerPossibilityRate(skillsMaster: skillsMasters[11], ch
                 //Statistics Collection
                 for (int toTargetUniqueID = 0; toTargetUniqueID < totalDealtDamages.Length; toTargetUniqueID++)
                 {
-                    characters[toTargetUniqueID].StatisticsCollection.AllTotalBeTakenDamage += totalDealtDamages[toTargetUniqueID];
+                    characters[toTargetUniqueID].Statistics.AllTotalBeTakenDamage += totalDealtDamages[toTargetUniqueID];
                     if (totalDealtDamages[toTargetUniqueID] > 0)
                     {
                         if (criticalReduction > 0)
                         {
-                            characters[toTargetUniqueID].StatisticsCollection.CriticalTotalBeTakenDamage += totalDealtDamages[toTargetUniqueID];
-                            characters[toTargetUniqueID].StatisticsCollection.CriticalBeenHitCount++;
+                            characters[toTargetUniqueID].Statistics.CriticalTotalBeTakenDamage += totalDealtDamages[toTargetUniqueID];
+                            characters[toTargetUniqueID].Statistics.CriticalBeenHitCount++;
                         }
-                        if (order.SkillEffectChosen != null)
+                        if (order.SkillEffectChosen != null && order.SkillEffectChosen.Skill.Name != SkillName.normalAttack)
                         {
-                            if (order.SkillEffectChosen.Skill.Name != SkillName.normalAttack)
-                            {
-                                characters[toTargetUniqueID].StatisticsCollection.SkillTotalBeTakenDamage += totalDealtDamages[toTargetUniqueID];
-                                characters[toTargetUniqueID].StatisticsCollection.SkillBeenHitCount++;
-                            }
+                            characters[toTargetUniqueID].Statistics.SkillTotalBeTakenDamage += totalDealtDamages[toTargetUniqueID];
+                            characters[toTargetUniqueID].Statistics.SkillBeenHitCount++;
                         }
-                        if (totalDealtDamages[toTargetUniqueID] > 0) // Get information of character is hit by attack.
-                        {
-                            BattleResult.HitMoreThanOnceCharacters.Add(characters[toTargetUniqueID]);
-                            characters[toTargetUniqueID].StatisticsCollection.AllHitCount++;
-                        }
+                        BattleResult.HitMoreThanOnceCharacters.Add(characters[toTargetUniqueID]);// Get information of character hit by attack.
+                        characters[toTargetUniqueID].Statistics.AllHitCount++;
                     }
                     if (characters[toTargetUniqueID].IsAvoidMoreThanOnce) { BattleResult.AvoidMoreThanOnceCharacters.Add(characters[toTargetUniqueID]); } // Set avoidMoreThanOnce characters
 
                 }
-                order.Actor.StatisticsCollection.AllActivatedCount++;
-                order.Actor.StatisticsCollection.AllTotalDealtDamage += totalDealtDamageSum;
-                order.Actor.StatisticsCollection.AllHitCount += numberOfSuccessAttacks;
+                order.Actor.Statistics.AllActivatedCount++;
+                order.Actor.Statistics.AllTotalDealtDamage += totalDealtDamageSum;
+                order.Actor.Statistics.AllHitCount += numberOfSuccessAttacks;
                 if (criticalReduction > 0)
                 {
-                    order.Actor.StatisticsCollection.CriticalActivatedCount++;
-                    order.Actor.StatisticsCollection.CriticalHitCount += numberOfSuccessAttacks;
-                    order.Actor.StatisticsCollection.CriticalTotalDealtDamage += totalDealtDamageSum;
+                    order.Actor.Statistics.CriticalActivatedCount++;
+                    order.Actor.Statistics.CriticalHitCount += numberOfSuccessAttacks;
+                    order.Actor.Statistics.CriticalTotalDealtDamage += totalDealtDamageSum;
                 }
 
                 if (order.SkillEffectChosen != null)
                 {
                     if (order.SkillEffectChosen.Skill.Name != SkillName.normalAttack)
                     {
-                        order.Actor.StatisticsCollection.SkillActivatedCount++;
-                        order.Actor.StatisticsCollection.SkillHitCount += numberOfSuccessAttacks;
-                        order.Actor.StatisticsCollection.SkillTotalDealtDamage += totalDealtDamageSum;
+                        order.Actor.Statistics.SkillActivatedCount++;
+                        order.Actor.Statistics.SkillHitCount += numberOfSuccessAttacks;
+                        order.Actor.Statistics.SkillTotalDealtDamage += totalDealtDamageSum;
                     }
                 }
 
@@ -1854,13 +1808,9 @@ triggeredPossibility: TriggerPossibilityRate(skillsMaster: skillsMasters[11], ch
                     if (order.SkillEffectChosen.Skill.Name != SkillName.normalAttack)
                     { skillTriggerPossibility = " (Trigger Possibility: " + (int)(order.SkillEffectChosen.TriggeredPossibility * 1000.0) / 10.0 + "% left:" + order.SkillEffectChosen.UsageCount + ")"; }
                 }
-                string sNumberofAttacks = null;
-                if (order.Actor.Combat.NumberOfAttacks != 1) { sNumberofAttacks = "s"; }
-                string snumberOfSuccessAttacks = null;
-                if (numberOfSuccessAttacks != 1) { snumberOfSuccessAttacks = "s"; }
-
-                string skillName = "unknown skill";
-                if (order.SkillEffectChosen != null) { skillName = order.SkillEffectChosen.Skill.Name.ToString(); }
+                string sNumberofAttacks = null; if (order.Actor.Combat.NumberOfAttacks != 1) { sNumberofAttacks = "s"; }
+                string snumberOfSuccessAttacks = null; if (numberOfSuccessAttacks != 1) { snumberOfSuccessAttacks = "s"; }
+                string skillName = "unknown skill"; if (order.SkillEffectChosen != null) { skillName = order.SkillEffectChosen.Skill.Name.ToString(); }
 
                 Log += new string(' ', 2) + order.Actor.Name + "'s " + criticalWords + skillName + skillTriggerPossibility + " "
                 + order.Actor.Combat.NumberOfAttacks + "time" + sNumberofAttacks +

@@ -1,0 +1,10 @@
+/Users/celvena/Projects/TurnBasedBattleEngine/TurnBasedBattleEngine/bin/Release/netcoreapp2.1/TurnBasedBattleEngine.deps.json
+/Users/celvena/Projects/TurnBasedBattleEngine/TurnBasedBattleEngine/bin/Release/netcoreapp2.1/TurnBasedBattleEngine.runtimeconfig.json
+/Users/celvena/Projects/TurnBasedBattleEngine/TurnBasedBattleEngine/bin/Release/netcoreapp2.1/TurnBasedBattleEngine.runtimeconfig.dev.json
+/Users/celvena/Projects/TurnBasedBattleEngine/TurnBasedBattleEngine/bin/Release/netcoreapp2.1/TurnBasedBattleEngine.dll
+/Users/celvena/Projects/TurnBasedBattleEngine/TurnBasedBattleEngine/bin/Release/netcoreapp2.1/TurnBasedBattleEngine.pdb
+/Users/celvena/Projects/TurnBasedBattleEngine/TurnBasedBattleEngine/obj/Release/netcoreapp2.1/TurnBasedBattleEngine.csproj.CoreCompileInputs.cache
+/Users/celvena/Projects/TurnBasedBattleEngine/TurnBasedBattleEngine/obj/Release/netcoreapp2.1/TurnBasedBattleEngine.AssemblyInfoInputs.cache
+/Users/celvena/Projects/TurnBasedBattleEngine/TurnBasedBattleEngine/obj/Release/netcoreapp2.1/TurnBasedBattleEngine.AssemblyInfo.cs
+/Users/celvena/Projects/TurnBasedBattleEngine/TurnBasedBattleEngine/obj/Release/netcoreapp2.1/TurnBasedBattleEngine.dll
+/Users/celvena/Projects/TurnBasedBattleEngine/TurnBasedBattleEngine/obj/Release/netcoreapp2.1/TurnBasedBattleEngine.pdb

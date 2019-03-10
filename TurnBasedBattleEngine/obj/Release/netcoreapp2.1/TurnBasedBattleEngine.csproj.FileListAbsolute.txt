@@ -8,3 +8,4 @@
 /Users/celvena/Projects/TurnBasedBattleEngine/TurnBasedBattleEngine/obj/Release/netcoreapp2.1/TurnBasedBattleEngine.AssemblyInfo.cs
 /Users/celvena/Projects/TurnBasedBattleEngine/TurnBasedBattleEngine/obj/Release/netcoreapp2.1/TurnBasedBattleEngine.dll
 /Users/celvena/Projects/TurnBasedBattleEngine/TurnBasedBattleEngine/obj/Release/netcoreapp2.1/TurnBasedBattleEngine.pdb
+/Users/celvena/Projects/TurnBasedBattleEngine/TurnBasedBattleEngine/obj/Release/netcoreapp2.1/TurnBasedBattleEngine.csprojAssemblyReference.cache

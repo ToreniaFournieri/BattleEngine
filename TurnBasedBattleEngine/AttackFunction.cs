@@ -289,14 +289,18 @@ namespace BattleEngine
                 string sNumberofAttacks = null; if (order.Actor.Combat.NumberOfAttacks != 1) { sNumberofAttacks = "s"; }
                 string snumberOfSuccessAttacks = null; if (numberOfSuccessAttacks != 1) { snumberOfSuccessAttacks = "s"; }
                 string skillName = "unknown skill"; if (order.SkillEffectChosen != null) { skillName = order.SkillEffectChosen.Skill.Name.ToString(); }
+                string majorityElement = " [mixed]";
+                if (order.Actor.Combat.KineticAttackRatio > 0.5) { majorityElement = " [Kinetic]"; }
+                if (order.Actor.Combat.ChemicalAttackRatio > 0.5) { majorityElement = " [Chemical]"; }
+                if (order.Actor.Combat.ThermalAttackRatio > 0.5) { majorityElement = " [Thermal]"; }
 
                 Log += new string(' ', 2) + order.Actor.Name + "'s " + criticalWords + skillName + skillTriggerPossibility + " "
                 + order.Actor.Combat.NumberOfAttacks + "time" + sNumberofAttacks +
-                 " total hit" + snumberOfSuccessAttacks + ":" + numberOfSuccessAttacks + " Speed:" + order.ActionSpeed + "\n"
-                + "   Attack:" + (order.Actor.Combat.Attack)
-                + " (Kinetic:" + (order.Actor.Combat.KineticAttackRatio * 100)
-                 + "% Chemical:" + (order.Actor.Combat.ChemicalAttackRatio * 100)
-                 + "% Thermal:" + (order.Actor.Combat.ThermalAttackRatio * 100) + "%) \n";
+                 " total hit" + snumberOfSuccessAttacks + ":" + numberOfSuccessAttacks + majorityElement + " Speed:" + order.ActionSpeed + "\n";
+                //+ "   Attack:" + (order.Actor.Combat.Attack)
+                //+ " (Kinetic:" + (order.Actor.Combat.KineticAttackRatio * 100)
+                 //+ "% Chemical:" + (order.Actor.Combat.ChemicalAttackRatio * 100)
+                 //+ "% Thermal:" + (order.Actor.Combat.ThermalAttackRatio * 100) + "%) \n";
 
                 for (int fTargetColumn = 0; fTargetColumn <= opponents.Count - 1; fTargetColumn++)
                 {

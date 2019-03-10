@@ -1,11 +1,13 @@
 ﻿<Properties StartupConfiguration="{600E319E-5CC7-481E-830C-7FA3F3F9B2A0}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument="TurnBasedBattleEngine/Program.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="TurnBasedBattleEngine/AttackFunction.cs">
     <Files>
-      <File FileName="TurnBasedBattleEngine/Program.cs" Line="1" Column="1" />
+      <File FileName="TurnBasedBattleEngine/Program.cs" Line="560" Column="36" />
+      <File FileName="TurnBasedBattleEngine/Class.cs" Line="252" Column="18" />
+      <File FileName="TurnBasedBattleEngine/AttackFunction.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.ItemProperties.TurnBasedBattleEngine PreferredExecutionTarget="MonoDevelop.Default" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />

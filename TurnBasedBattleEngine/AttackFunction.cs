@@ -350,7 +350,7 @@ namespace BattleEngine
                 } //fTargetColumn
 
                 //Absorb log
-                if (healedByAbsorbShiled > 0) { Log += new string(' ', 3) + order.Actor.Name + " absorbs shiled by " + healedByAbsorbShiled + ". \n"; }
+                if (healedByAbsorbShiled > 0) { Log += new string(' ', 3) + order.Actor.Name + " absorbs shield by " + healedByAbsorbShiled + ". \n"; }
 
             }
         }

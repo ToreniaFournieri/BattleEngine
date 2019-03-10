@@ -241,7 +241,7 @@ namespace BattleEngine
 
                 for (int i = 0; i <= 5; i++)
                 {
-                    featureNormal = new BattleUnit.FeatureClass(absorbInitial: 0.0, damageControlAssist: false, hateInitial: 10, hateMagnificationPerTurn: 0.666);
+                    featureNormal = new BattleUnit.FeatureClass(absorbShieldInitial: 0.07, damageControlAssist: false, hateInitial: 10, hateMagnificationPerTurn: 0.666);
                     characters.Add(new BattleUnit(uniqueID: i, name: "PIG" + (i + 1).ToString() + "-" + skillsMasters[i].Name.ToString().Substring(0, 7), affiliation: Affiliation.ally, unitType: UnitType.robot,
                      ability: abilities[i], combat: combats[i], feature: featureNormal,
                          offenseMagnification: offenseMagnification, defenseMagnification: defenseMagnification, skillMagnification: skillMagnificationOffenseDoubleTriggerTriple));
@@ -249,14 +249,14 @@ namespace BattleEngine
                 //Medic only  number 6
                 for (int i = 6; i <= 6; i++)
                 {
-                    featureMedic = new BattleUnit.FeatureClass(absorbInitial: 0.0, damageControlAssist: true, hateInitial: 0, hateMagnificationPerTurn: 0.500);
+                    featureMedic = new BattleUnit.FeatureClass(absorbShieldInitial: 0.0, damageControlAssist: true, hateInitial: 0, hateMagnificationPerTurn: 0.500);
                     characters.Add(new BattleUnit(uniqueID: i, name: "PIG" + (i + 1).ToString() + "-MedicHe", affiliation: Affiliation.ally, unitType: UnitType.robot,
                      ability: abilities[i], combat: combats[i], feature: featureMedic,
                          offenseMagnification: offenseMagnification, defenseMagnification: defenseMagnification, skillMagnification: skillMagnificationOffenseDoubleTriggerTriple));
                 }
                 for (int i = 7; i <= 12; i++)
                 {
-                    featureNormal = new BattleUnit.FeatureClass(absorbInitial: 0.0, damageControlAssist: false, hateInitial: 10, hateMagnificationPerTurn: 0.666);
+                    featureNormal = new BattleUnit.FeatureClass(absorbShieldInitial: 0.07, damageControlAssist: false, hateInitial: 10, hateMagnificationPerTurn: 0.666);
                     // pigs skill has 8 so  skillsMasters [i - 6 -1 ] collect
                     characters.Add(new BattleUnit(uniqueID: i, name: "ELD" + (i - 6).ToString() + "-" + skillsMasters[i - 7].Name.ToString().Substring(0, 7), affiliation: Affiliation.enemy, unitType: UnitType.cyborg,
                      ability: abilities[i], combat: combats[i], feature: featureNormal,
@@ -265,7 +265,7 @@ namespace BattleEngine
                 //Medic only  number 13
                 for (int i = 13; i <= 13; i++)
                 {
-                    featureMedic = new BattleUnit.FeatureClass(absorbInitial: 0.0, damageControlAssist: true, hateInitial: 0, hateMagnificationPerTurn: 0.500);
+                    featureMedic = new BattleUnit.FeatureClass(absorbShieldInitial: 0.0, damageControlAssist: true, hateInitial: 0, hateMagnificationPerTurn: 0.500);
                     characters.Add(new BattleUnit(uniqueID: i, name: "ELD" + (i - 6).ToString() + "-MedicHe", affiliation: Affiliation.enemy, unitType: UnitType.cyborg,
                      ability: abilities[i], combat: combats[i], feature: featureMedic,
                     offenseMagnification: offenseMagnification, defenseMagnification: defenseMagnification, skillMagnification: skillMagnificationOffenseDoubleTriggerTriple));
@@ -384,6 +384,8 @@ namespace BattleEngine
                                 log += SkillLogicDispatcher(order: order, characters: characters, r: r); // SkillLogic action include damage control assist.
                                 result = SkillMoveFunction(order: order, characters: characters, r: r); // offense action
                                 log += result.log;
+                                log += new string(' ', 2) + "-------------\n";
+
                                 battleResult = result.battleResult;
 
                                 if (order.IsDamageControlAssist) //only when Damage Control Assist
@@ -896,7 +898,7 @@ triggeredPossibility: TriggerPossibilityRate(skillsMaster: skillsMasters[11], ch
                         if (addingEffect[i].Skill.BuffTarget.BarrierRemaining > 0)
                         { log += " [Barrier: " + buffTargetCharacters[i].Buff.BarrierRemaining + " (+" + addingEffect[i].Skill.BuffTarget.BarrierRemaining + ")] \n"; }
                     }
-                    log += "\n";
+                    //log += "\n";
                     break;
                 case TargetType.none: break;
                 default: break;

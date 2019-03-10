@@ -368,13 +368,13 @@ namespace BattleEngine
                     if ((characters[i].Combat.ShiledMax - characters[i].Combat.ShiledCurrent) <= shiledHealAmount)
                     { // can heal max
                         characters[i].Combat.ShiledCurrent = characters[i].Combat.ShiledMax;
-                        Log += characters[i].Name + " heals all shiled." +
+                        Log += new string(' ', 5) + characters[i].Name + " heals all shiled." +
                          " Shiled:" + characters[i].Combat.ShiledCurrent + " (" + (int)((double)characters[i].Combat.ShiledCurrent / (double)characters[i].Combat.ShiledMax * 100) + "%) \n";
                     }
                     else
                     {
                         characters[i].Combat.ShiledCurrent += shiledHealAmount;
-                        Log += characters[i].Name + " heals " + shiledHealAmount +
+                        Log += new string(' ', 5) + characters[i].Name + " heals " + shiledHealAmount +
                          " Shiled:" + characters[i].Combat.ShiledCurrent + " (" + (int)((double)characters[i].Combat.ShiledCurrent / (double)characters[i].Combat.ShiledMax * 100) + "%) \n";
                     }
                 }

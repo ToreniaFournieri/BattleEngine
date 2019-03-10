@@ -17,6 +17,8 @@ namespace BattleEngine
 
             // Initialize battle environment: Hit, Failed Hit, Damage for each opponent.
             int totalDealtDamageSum = 0;
+            int totalDealtToShiledDamageSum = 0;
+            int healedByAbsorbShiled = 0;
             int numberOfHitTotal = 0;
             int numberOfSuccessAttacks = 0;
             List<BattleUnit> opponents = characters.FindAll(character1 => character1.Affiliation == toTargetAffiliation && character1.Combat.HitPointCurrent > 0);
@@ -141,11 +143,7 @@ namespace BattleEngine
                          * (Math.Pow(decayAccuracy, numberOfSuccessAttacks) / decayAccuracy);
 
                         //judge
-                        if (hitPossibility <= r.NextDouble()) //Failed!
-                        {
-                            if (toTarget.IsAvoidMoreThanOnce == false) { toTarget.IsAvoidMoreThanOnce = true; }
-                            toTarget.Statistics.AvoidCount++;
-                        }
+                        if (hitPossibility <= r.NextDouble()) { if (toTarget.IsAvoidMoreThanOnce == false) { toTarget.IsAvoidMoreThanOnce = true; } toTarget.Statistics.AvoidCount++; } //Failed!
                         else //success!
                         {
                             numberOfSuccessAttacks++;
@@ -202,10 +200,11 @@ namespace BattleEngine
                             totalDealtDamageSum += dealtDamage;
 
                             //Damage calclations 1st shiled, and 2nd hitPoint.
-                            if (toTarget.Combat.ShiledCurrent >= dealtDamage) { toTarget.Combat.ShiledCurrent -= dealtDamage; }// Only shiled damaged
+                            if (toTarget.Combat.ShiledCurrent >= dealtDamage) { toTarget.Combat.ShiledCurrent -= dealtDamage; totalDealtToShiledDamageSum += dealtDamage; }// Only shiled damaged
                             else // shiled break
                             {
                                 int remainsDamage = dealtDamage - toTarget.Combat.ShiledCurrent;
+                                totalDealtToShiledDamageSum += toTarget.Combat.ShiledCurrent;
                                 toTarget.Combat.ShiledCurrent = 0;
                                 if (toTarget.Combat.HitPointCurrent > remainsDamage) // hitPoint damage
                                 {
@@ -228,6 +227,19 @@ namespace BattleEngine
                     numberOfHitTotal++;
                 }
                 //Absorb calculation HERE!!
+                if (totalDealtToShiledDamageSum > 0 && order.Actor.Feature.AbsorbShieldRatioCurrent > 0) //only when to shiled damage exist and absorb exist.
+                {
+                    if (order.Actor.Combat.ShiledCurrent < order.Actor.Combat.ShiledMax) // when actor is not full shiled 
+                    {
+                        healedByAbsorbShiled = (int)(totalDealtToShiledDamageSum * order.Actor.Feature.AbsorbShieldRatioCurrent);
+                        if (healedByAbsorbShiled > order.Actor.Combat.ShiledMax * order.Actor.Feature.AbsorbShieldMaxRatioCurrent) // reached max absorb ratio
+                        { healedByAbsorbShiled = (int)(order.Actor.Combat.ShiledMax * order.Actor.Feature.AbsorbShieldMaxRatioCurrent); }
+                        order.Actor.Combat.ShiledCurrent += healedByAbsorbShiled;
+                        if (order.Actor.Combat.ShiledCurrent > order.Actor.Combat.ShiledMax) { order.Actor.Combat.ShiledCurrent = order.Actor.Combat.ShiledMax; }
+                        // log should show expected total amount of healed value, not actural healed amount.
+                    }
+                }
+
 
                 // Hate Managiment
                 double criticalHateAdd = 0; if (criticalReduction > 0) { criticalHateAdd = 30; }
@@ -294,13 +306,11 @@ namespace BattleEngine
                 if (order.Actor.Combat.ChemicalAttackRatio > 0.5) { majorityElement = " [Chemical]"; }
                 if (order.Actor.Combat.ThermalAttackRatio > 0.5) { majorityElement = " [Thermal]"; }
 
+                string speedText = null; if (order.ActionSpeed > 0) { speedText = " Speed:" + order.ActionSpeed; }
+
                 Log += new string(' ', 2) + order.Actor.Name + "'s " + criticalWords + skillName + skillTriggerPossibility + " "
                 + order.Actor.Combat.NumberOfAttacks + "time" + sNumberofAttacks +
-                 " total hit" + snumberOfSuccessAttacks + ":" + numberOfSuccessAttacks + majorityElement + " Speed:" + order.ActionSpeed + "\n";
-                //+ "   Attack:" + (order.Actor.Combat.Attack)
-                //+ " (Kinetic:" + (order.Actor.Combat.KineticAttackRatio * 100)
-                 //+ "% Chemical:" + (order.Actor.Combat.ChemicalAttackRatio * 100)
-                 //+ "% Thermal:" + (order.Actor.Combat.ThermalAttackRatio * 100) + "%) \n";
+                 " total hit" + snumberOfSuccessAttacks + ":" + numberOfSuccessAttacks + majorityElement + speedText + "\n";
 
                 for (int fTargetColumn = 0; fTargetColumn <= opponents.Count - 1; fTargetColumn++)
                 {
@@ -338,6 +348,10 @@ namespace BattleEngine
                     BattleResult.IsDraw = WipeOutCheck.IsDraw;
                     BattleResult.TotalDeltDamage = totalDealtDamageSum;
                 } //fTargetColumn
+
+                //Absorb log
+                if (healedByAbsorbShiled > 0) { Log += new string(' ', 3) + order.Actor.Name + " absorbs shiled by " + healedByAbsorbShiled + ". \n"; }
+
             }
         }
 

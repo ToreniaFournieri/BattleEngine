@@ -92,18 +92,20 @@ namespace BattleEngine
 
         public class FeatureClass
         {
-            public FeatureClass(double absorbInitial, bool damageControlAssist, double hateInitial, double hateMagnificationPerTurn)
+            public FeatureClass(double absorbShieldInitial, bool damageControlAssist, double hateInitial, double hateMagnificationPerTurn)
             {
-                this.AbsorbRatioCurrent = absorbInitial; this.AbsorbRatioInitial = absorbInitial; this.DamageControlAssist = damageControlAssist;
+                this.AbsorbShieldRatioCurrent = absorbShieldInitial; this.AbsorbShieldRatioInitial = absorbShieldInitial;
+                this.AbsorbShieldMaxRatioCurrent = absorbShieldInitial * 3.0; this.AbsorbShieldMaxRatioInitial = absorbShieldInitial * 3.0;
+                this.DamageControlAssist = damageControlAssist;
                 this.HateInitial = hateInitial; this.HateCurrent = hateInitial; this.HateMagnificationPerTurn = hateMagnificationPerTurn;
             }
             // absorb level should i call?
-            // int absorbLevel  1= (3 * absorbLevel)% of attack and total (9 + 3* absorbLevel)% of max shiled heal  etc...
+            // int absorbLevel  1= (3 * absorbLevel)% of attack and total (9 + 3* absorbLevel)% of max shield heal  etc...
             public void InitializeFeature() { this.HateCurrent = HateInitial; }
-            public double AbsorbRatioInitial { get; }
-            public double AbsorbRatioCurrent { get; set; }
-            public double AbsorbMaxRatioInitial { get; }
-            public double AbsorbMaxRatioCurrent { get; set; }
+            public double AbsorbShieldRatioInitial { get; }
+            public double AbsorbShieldRatioCurrent { get; set; }
+            public double AbsorbShieldMaxRatioInitial { get; }
+            public double AbsorbShieldMaxRatioCurrent { get; set; }
             public bool DamageControlAssist { get; }
             public double HateInitial { get; }
             public double HateCurrent { get; set; }

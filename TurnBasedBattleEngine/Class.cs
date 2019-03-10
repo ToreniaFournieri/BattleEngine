@@ -240,9 +240,7 @@ namespace BattleEngine
             public bool AccumulationSkillBeenHit { get; set; }
             public bool AccumulationSkillHit { get; set; }
             public bool TriggeredPossibility { get; set; }
-
         }
-
 
         public IsntTriggeredBecauseClass IsntTriggeredBecause { get; set; }
         public BattleUnit Character { get; }

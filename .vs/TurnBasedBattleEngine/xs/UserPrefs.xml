@@ -1,17 +1,19 @@
 ﻿<Properties StartupConfiguration="{600E319E-5CC7-481E-830C-7FA3F3F9B2A0}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument="TurnBasedBattleEngine/Program.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="TurnBasedBattleEngine/Class.cs">
     <Files>
-      <File FileName="TurnBasedBattleEngine/Program.cs" Line="16" Column="33" />
-      <File FileName="TurnBasedBattleEngine/Class.cs" Line="377" Column="49" />
+      <File FileName="TurnBasedBattleEngine/Program.cs" Line="15" Column="37" />
+      <File FileName="TurnBasedBattleEngine/Class.cs" Line="245" Column="62" />
       <File FileName="TurnBasedBattleEngine/AttackFunction.cs" Line="336" Column="50" />
-      <File FileName="TurnBasedBattleEngine/BattleUnit.cs" Line="103" Column="109" />
+      <File FileName="TurnBasedBattleEngine/BattleUnit.cs" Line="28" Column="47" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.ItemProperties.TurnBasedBattleEngine PreferredExecutionTarget="MonoDevelop.Default" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
+    <BreakpointStore>
+      <Breakpoint file="/Users/celvena/Projects/TurnBasedBattleEngine/TurnBasedBattleEngine/Program.cs" relfile="TurnBasedBattleEngine/Program.cs" line="719" column="76" />
+    </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MultiItemStartupConfigurations />
 </Properties>

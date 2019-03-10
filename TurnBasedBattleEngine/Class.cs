@@ -251,7 +251,7 @@ namespace BattleEngine
     //Action order class
     public class OrderClass
     {
-        public OrderClass(BattleUnit actor, ActionType actionType, List<EffectClass> skillEffectProposed, int actionSpeed, int individualTargetID, bool isDamageControlAssist)
+        public OrderClass(BattleUnit actor, ActionType actionType, ref List<EffectClass> skillEffectProposed, int actionSpeed, int individualTargetID, bool isDamageControlAssist)
         {
             this.Actor = actor; this.ActionType = actionType; this.SkillEffectProposed = skillEffectProposed;
             this.ActionSpeed = actionSpeed; this.IndividualTargetID = individualTargetID; this.IsDamageControlAssist = isDamageControlAssist;
@@ -267,6 +267,7 @@ namespace BattleEngine
             if (SkillEffectProposed != null) // skill effect proposed valid check
             {
                 List<EffectClass> validEffects = new List<EffectClass>();
+
                 foreach (EffectClass effect in SkillEffectProposed) { if (effect.UsageCount > 0) { validEffects.Add(effect); } }
 
                 if (validEffects.Count == 0) { Console.WriteLine(" no valid skill exist" + this.Actor.Name + " " + this.ActionType); }

@@ -357,7 +357,7 @@ namespace BattleEngine
                                         EffectClass normalAttackEffect = new EffectClass(character: aliveCharacters[i], skill: skillsMasters[14], actionType: ActionType.normalAttack, offenseEffectMagnification: 1.0,
                                         triggeredPossibility: 1.0, isDamageControlAssistAble: false, usageCount: 1000, veiledFromTurn: 1, veiledToTurn: 20);
                                         effectList.Add(normalAttackEffect);
-                                        orderForSort.Add(new OrderClass(actor: aliveCharacters[i], actionType: ActionType.move, skillEffectProposed: effectList,
+                                        orderForSort.Add(new OrderClass(actor: aliveCharacters[i], actionType: ActionType.move, skillEffectProposed: ref effectList,
                                         actionSpeed: (aliveCharacters[i].Ability.Responsiveness * r.Next(40 + aliveCharacters[i].Ability.Luck, 100)), individualTargetID: -1, isDamageControlAssist: false));
                                     }
                                     orderForSort.Sort((OrderClass x, OrderClass y) => x.ActionSpeed - y.ActionSpeed);
@@ -401,13 +401,9 @@ namespace BattleEngine
                                     //effect spend.
                                     if (order.SkillEffectChosen != null)
                                     {
-                                        EffectClass spendEffect = effects.Find((obj) => obj.Character == order.Actor && obj.Skill.Name == order.SkillEffectChosen.Skill.Name);
-                                        if (spendEffect != null) // normal attack is null
-                                        {
-                                            spendEffect.UsageCount -= 1;
-                                            spendEffect.SpentCount += 1;
-                                            spendEffect.NextAccumulationCount += (int)(spendEffect.Skill.TriggerBase.AccumulationBaseRate * spendEffect.Skill.TriggerBase.AccumulationWeight);
-                                        }
+                                        order.SkillEffectChosen.UsageCount -= 1;
+                                        order.SkillEffectChosen.SpentCount += 1;
+                                        order.SkillEffectChosen.NextAccumulationCount += (int)(order.SkillEffectChosen.Skill.TriggerBase.AccumulationBaseRate * order.SkillEffectChosen.Skill.TriggerBase.AccumulationWeight);
                                     }
 
                                     log += BuffDebuffFunction(order: order, characters: characters, effects: effects, buffMasters: buffMasters, turn: turn); //Buff, debuff action
@@ -733,7 +729,7 @@ namespace BattleEngine
                 validEffectsPerActor = validEffects.FindAll(obj => obj.Character == character);
                 if (validEffectsPerActor.Count >= 1)
                 {
-                    skillsByOrder = new OrderClass(actor: character, actionType: actionType, skillEffectProposed: validEffectsPerActor, actionSpeed: 0,
+                    skillsByOrder = new OrderClass(actor: character, actionType: actionType, skillEffectProposed: ref validEffectsPerActor, actionSpeed: 0,
                      individualTargetID: individualTargetID, isDamageControlAssist: isDamageControlAssist);
                     skillsByOrderStack.Push(skillsByOrder);
                 }

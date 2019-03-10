@@ -191,6 +191,7 @@ namespace BattleEngine
             this.Character = character; this.Skill = skill; this.ActionType = actionType; this.OffenseEffectMagnification = offenseEffectMagnification; this.TriggeredPossibility = triggeredPossibility;
             this.IsDamageControlAssistAble = isDamageControlAssistAble; this.UsageCount = usageCount; this.VeiledFromTurn = veiledFromTurn; this.VeiledToTurn = veiledToTurn;
             this.SpentCount = 0; this.NextAccumulationCount = (int)skill.TriggerBase.AccumulationBaseRate;
+            this.IsntTriggeredBecause = new IsntTriggeredBecauseClass();
         }
 
         public void BuffToCharacter(int currentTurn)
@@ -208,6 +209,42 @@ namespace BattleEngine
             }
         }
 
+        public class IsntTriggeredBecauseClass
+        {
+            public IsntTriggeredBecauseClass() { Initialize(); }
+            public void Initialize()
+            {
+                this.IsItCalled = false; this.TriggerCondition = false; this.AfterAllMoved = false; this.TriggerTargetCounter = false; this.TriggerTargetChain = false;
+                this.TriggerTargetReAttack = false; this.TriggerTargetMove = false; this.Critical = false; this.NonCritical = false;
+                this.OnlyWhenBeenHitMoreThanOnce = false; this.OnlyWhenAvoidMoreThanOnce = false; this.AccumulationAvoid = false; this.AccumulationAllHitCount = false;
+                this.AccumulationAllTotalBeenHit = false; this.AccumulationCriticalBeenHit = false; this.AccumulationCriticalHit = false; this.AccumulationSkillBeenHit = false; 
+                this.AccumulationSkillHit = false; this.TriggeredPossibility = false;
+            }
+
+            public bool IsItCalled { get; set; }
+            public bool TriggerCondition { get; set; }
+            public bool AfterAllMoved { get; set; }
+            public bool TriggerTargetCounter { get; set; }
+            public bool TriggerTargetChain { get; set; }
+            public bool TriggerTargetReAttack { get; set; }
+            public bool TriggerTargetMove { get; set; }
+            public bool Critical { get; set; }
+            public bool NonCritical { get; set; }
+            public bool OnlyWhenBeenHitMoreThanOnce { get; set; }
+            public bool OnlyWhenAvoidMoreThanOnce { get; set; }
+            public bool AccumulationAvoid { get; set; }
+            public bool AccumulationAllHitCount { get; set; }
+            public bool AccumulationAllTotalBeenHit { get; set; }
+            public bool AccumulationCriticalBeenHit { get; set; }
+            public bool AccumulationCriticalHit { get; set; }
+            public bool AccumulationSkillBeenHit { get; set; }
+            public bool AccumulationSkillHit { get; set; }
+            public bool TriggeredPossibility { get; set; }
+
+        }
+
+
+        public IsntTriggeredBecauseClass IsntTriggeredBecause { get; set; }
         public BattleUnit Character { get; }
         public SkillsMasterStruct Skill { get; }
         public ActionType ActionType { get; }
@@ -221,7 +258,7 @@ namespace BattleEngine
         public int VeiledToTurn { get; }
     }
 
-    // STRUCT SEGUMENT
+
 
     //Report for struct
     public class StatisticsReporterFirstBloodClass

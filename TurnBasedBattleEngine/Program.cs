@@ -660,14 +660,14 @@ namespace BattleEngine
             List<EffectClass> validEffects = new List<EffectClass>();
             foreach (EffectClass effect in matchedActionTypeEffects)
             {
-                EffectClass filteredEffect = new EffectClass(character: effect.Character, skill: effect.Skill, actionType: effect.ActionType,
-                offenseEffectMagnification: effect.OffenseEffectMagnification, triggeredPossibility: effect.TriggeredPossibility, isDamageControlAssistAble: effect.IsDamageControlAssistAble, usageCount: effect.UsageCount,
-                 veiledFromTurn: effect.VeiledFromTurn, veiledToTurn: effect.VeiledToTurn);
-                if (effect.Skill.TriggerTarget.ActionType != ActionType.any) { if ((effect.Skill.TriggerTarget.ActionType == attackerOrder.ActionType) == false) { continue; } } // Trigger condition check
+                effect.IsntTriggeredBecause.Initialize();
+                if (effect.Skill.TriggerTarget.ActionType != ActionType.any) { if ((effect.Skill.TriggerTarget.ActionType == attackerOrder.ActionType) == false)
+                 { effect.IsntTriggeredBecause.TriggerCondition = true; continue; } } // Trigger condition check
                 if (effect.Skill.ActionType != ActionType.move && effect.Skill.TriggerTarget.AfterAllMoved == false) // check normal Attack left, except move skill. (move skill is itself so check this logic make no sense )
                 {
                     List<OrderClass> checkOrders = orders.ToList();
-                    if (checkOrders.FindLast((obj) => obj.Actor == effect.Character && obj.SkillEffectChosen.Skill.Name == SkillName.normalAttack) == null) { continue; }// no normalAttack left, whitch means no action.   
+                    if (checkOrders.FindLast((obj) => obj.Actor == effect.Character && obj.SkillEffectChosen.Skill.Name == SkillName.normalAttack) == null)
+                     { effect.IsntTriggeredBecause.AfterAllMoved = true; continue; }// no normalAttack left, whitch means no action.   
                 }
 
 
@@ -677,47 +677,63 @@ namespace BattleEngine
                     if (effect.Skill.TriggerTarget.AfterAllMoved == false)
                     {
                         List<OrderClass> checkActionOrders = orders.ToList();
-                        if (checkActionOrders.FindLast((obj) => obj.Actor == effect.Character && obj.ActionType == ActionType.move) == null) { continue; }// no normalAttack left, whitch means no action.   
+                        if (checkActionOrders.FindLast((obj) => obj.Actor == effect.Character && obj.ActionType == ActionType.move) == null)
+                         { effect.IsntTriggeredBecause.AfterAllMoved = true; continue; }// no normalAttack left, whitch means no action.   
                     }
                 }
 
                 if (attackerOrder != null) // only attackOrder exist, check
                 {
-                    if (effect.Skill.TriggerTarget.Counter == false && attackerOrder.ActionType == ActionType.counter) { continue; } // counter reaction
-                    if (effect.Skill.TriggerTarget.Chain == false && attackerOrder.ActionType == ActionType.chain) { continue; } // chain reaction
-                    if (effect.Skill.TriggerTarget.ReAttack == false && attackerOrder.ActionType == ActionType.reAttack) { continue; } // reAttack reaction
-                    if (effect.Skill.TriggerTarget.Move == false && attackerOrder.ActionType == ActionType.move) { continue; } // move skill reaction
+                    if (effect.Skill.TriggerTarget.Counter == false && attackerOrder.ActionType == ActionType.counter)
+                     { effect.IsntTriggeredBecause.TriggerTargetCounter = true; continue; } // counter reaction
+                    if (effect.Skill.TriggerTarget.Chain == false && attackerOrder.ActionType == ActionType.chain)
+                     { effect.IsntTriggeredBecause.TriggerTargetChain = true; continue; } // chain reaction
+                    if (effect.Skill.TriggerTarget.ReAttack == false && attackerOrder.ActionType == ActionType.reAttack)
+                     { effect.IsntTriggeredBecause.TriggerTargetReAttack = true; continue; } // reAttack reaction
+                    if (effect.Skill.TriggerTarget.Move == false && attackerOrder.ActionType == ActionType.move)
+                     { effect.IsntTriggeredBecause.TriggerTargetMove = true; continue; } // move skill reaction
                 }
 
                 // AttackType MajestyAttackType NO IMPLEMENTATION.
 
                 if (effect.Skill.TriggerTarget.Critical != CriticalOrNot.any)
                 {
-                    if (effect.Skill.TriggerTarget.Critical == CriticalOrNot.critical && battleResult.CriticalOrNot == CriticalOrNot.nonCritical) { continue; } // non critical but only when critical triggers
-                    if (effect.Skill.TriggerTarget.Critical == CriticalOrNot.nonCritical && battleResult.CriticalOrNot == CriticalOrNot.critical) { continue; } // critical but only when non critical triggers
+                    if (effect.Skill.TriggerTarget.Critical == CriticalOrNot.critical && battleResult.CriticalOrNot == CriticalOrNot.nonCritical)
+                     { effect.IsntTriggeredBecause.Critical = true; continue; } // non critical but only when critical triggers
+                    if (effect.Skill.TriggerTarget.Critical == CriticalOrNot.nonCritical && battleResult.CriticalOrNot == CriticalOrNot.critical)
+                     { effect.IsntTriggeredBecause.NonCritical = true; continue; } // critical but only when non critical triggers
                 }
 
 
                 //ActorOrTargetUnit WhoCrushed   NO IMPLEMENTATION.
 
-                if (effect.Skill.TriggerTarget.OnlyWhenBeenHitMoreThanOnce && (battleResult.HitMoreThanOnceCharacters.Find((obj) => obj == effect.Character) == null)) { continue; } //Being hit .this means not hit, so skill should not be triggered.
-                if (effect.Skill.TriggerTarget.OnlyWhenAvoidMoreThanOnce && ((battleResult.AvoidMoreThanOnceCharacters.Find((obj) => obj == effect.Character)) == null)) { continue; } //being avoid. this means not hit, so skill should not be triggered.
+                if (effect.Skill.TriggerTarget.OnlyWhenBeenHitMoreThanOnce && (battleResult.HitMoreThanOnceCharacters.Find((obj) => obj == effect.Character) == null))
+                 { effect.IsntTriggeredBecause.OnlyWhenBeenHitMoreThanOnce = true; continue; } //Being hit .this means not hit, so skill should not be triggered.
+                if (effect.Skill.TriggerTarget.OnlyWhenAvoidMoreThanOnce && ((battleResult.AvoidMoreThanOnceCharacters.Find((obj) => obj == effect.Character)) == null))
+                 { effect.IsntTriggeredBecause.OnlyWhenAvoidMoreThanOnce = true; continue; } //being avoid. this means not hit, so skill should not be triggered.
 
                 switch (effect.Skill.TriggerBase.AccumulationReference) //Trigger Accumulation check
                 {
                     case ReferenceStatistics.none: break;
-                    case ReferenceStatistics.AvoidCount: if (effect.Character.Statistics.AvoidCount < effect.NextAccumulationCount) { continue; } break;
-                    case ReferenceStatistics.AllHitCount: if (effect.Character.Statistics.AllHitCount < effect.NextAccumulationCount) { continue; } break;
-                    case ReferenceStatistics.AllTotalBeenHitCount: if (effect.Character.Statistics.AllTotalBeenHitCount < effect.NextAccumulationCount) { continue; } break;
-                    case ReferenceStatistics.CriticalBeenHitCount: if (effect.Character.Statistics.CriticalBeenHitCount < effect.NextAccumulationCount) { continue; } break;
-                    case ReferenceStatistics.CriticalHitCount: if (effect.Character.Statistics.CriticalHitCount < effect.NextAccumulationCount) { continue; } break;
-                    case ReferenceStatistics.SkillBeenHitCount: if (effect.Character.Statistics.SkillBeenHitCount < effect.NextAccumulationCount) { continue; } break;
-                    case ReferenceStatistics.SkillHitCount: if (effect.Character.Statistics.SkillHitCount < effect.NextAccumulationCount) { continue; } break;
+                    case ReferenceStatistics.AvoidCount: if (effect.Character.Statistics.AvoidCount < effect.NextAccumulationCount)
+                     { effect.IsntTriggeredBecause.AccumulationAvoid = true ; continue; } break;
+                    case ReferenceStatistics.AllHitCount: if (effect.Character.Statistics.AllHitCount < effect.NextAccumulationCount)
+                     { effect.IsntTriggeredBecause.AccumulationAllHitCount = true; continue; } break;
+                    case ReferenceStatistics.AllTotalBeenHitCount: if (effect.Character.Statistics.AllTotalBeenHitCount < effect.NextAccumulationCount)
+                     { effect.IsntTriggeredBecause.AccumulationAllTotalBeenHit = true; continue; } break;
+                    case ReferenceStatistics.CriticalBeenHitCount: if (effect.Character.Statistics.CriticalBeenHitCount < effect.NextAccumulationCount) 
+                     { effect.IsntTriggeredBecause.AccumulationCriticalBeenHit = true; continue; } break;
+                    case ReferenceStatistics.CriticalHitCount: if (effect.Character.Statistics.CriticalHitCount < effect.NextAccumulationCount)
+                     { effect.IsntTriggeredBecause.AccumulationCriticalHit = true; continue; } break;
+                    case ReferenceStatistics.SkillBeenHitCount: if (effect.Character.Statistics.SkillBeenHitCount < effect.NextAccumulationCount)
+                     { effect.IsntTriggeredBecause.AccumulationSkillBeenHit = true; continue; } break;
+                    case ReferenceStatistics.SkillHitCount: if (effect.Character.Statistics.SkillHitCount < effect.NextAccumulationCount) 
+                    { effect.IsntTriggeredBecause.AccumulationSkillHit = true; continue; } break;
                     default: break;
                 }
 
                 double possibility = (double)(r.Next(0, 1000)) / 1000.0; //TriggerPossibility Check
-                if (effect.TriggeredPossibility >= possibility) { validEffects.Add(effect); }
+                if (effect.TriggeredPossibility >= possibility) { validEffects.Add(effect); } else { effect.IsntTriggeredBecause.TriggeredPossibility = true; continue; }
             }
 
             //set order  grouped by actors

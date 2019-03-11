@@ -217,7 +217,7 @@ namespace BattleEngine
                 this.IsItCalled = false; this.TriggerCondition = false; this.AfterAllMoved = false; this.TriggerTargetCounter = false; this.TriggerTargetChain = false;
                 this.TriggerTargetReAttack = false; this.TriggerTargetMove = false; this.Critical = false; this.NonCritical = false;
                 this.OnlyWhenBeenHitMoreThanOnce = false; this.OnlyWhenAvoidMoreThanOnce = false; this.AccumulationAvoid = false; this.AccumulationAllHitCount = false;
-                this.AccumulationAllTotalBeenHit = false; this.AccumulationCriticalBeenHit = false; this.AccumulationCriticalHit = false; this.AccumulationSkillBeenHit = false; 
+                this.AccumulationAllTotalBeenHit = false; this.AccumulationCriticalBeenHit = false; this.AccumulationCriticalHit = false; this.AccumulationSkillBeenHit = false;
                 this.AccumulationSkillHit = false; this.TriggeredPossibility = false;
             }
 
@@ -390,6 +390,17 @@ namespace BattleEngine
         public int ActionSpeed;
         public int IndividualTargetID;
         public bool IsDamageControlAssist;
+    }
+
+    public class OrderStatusClass
+    {
+        public OrderStatusClass() { Initialize(); }
+        public void Initialize() { this.CounterSkillCount = 0; this.ChainSkillCount = 0; this.ReAttackSkillCount = 0; this.DamageControlAssistCount = 0; }
+
+        public int CounterSkillCount { get; set; }
+        public int ChainSkillCount { get; set; }
+        public int ReAttackSkillCount { get; set; }
+        public int DamageControlAssistCount { get; set; }
     }
 
     public class ShiledHealFunction

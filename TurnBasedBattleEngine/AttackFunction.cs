@@ -349,6 +349,8 @@ namespace BattleEngine
                     BattleResult.TotalDeltDamage = totalDealtDamageSum;
                 } //fTargetColumn
 
+                if (numberOfSuccessAttacks == 0) { Log += new string(' ', 4) + "All attacks missed...  \n"; }
+
                 //Absorb log
                 if (healedByAbsorbShiled > 0) { Log += new string(' ', 3) + order.Actor.Name + " absorbs shield by " + healedByAbsorbShiled + ". \n"; }
 

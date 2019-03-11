@@ -14,6 +14,7 @@ namespace BattleEngine
             int numberOfCharacters = 14;
             int battleWavesSets = 1;
             int battleWaves = 1; // one set of battle 
+            string navigatorName = "Navigator";
 
             //BattleWaveSet variables
             double allyAttackMagnificationPerWavesSet = 0.20;
@@ -162,9 +163,9 @@ namespace BattleEngine
             skillsMasters[6] = new SkillsMasterStruct(name: SkillName.ShiledHealAll, actionType: ActionType.move, callSkillLogicName: CallSkillLogicName.ShieldHealMulti, isHeal: false, usageCount: 1, veiledTurn: 20, ability: Ability.generation,
              triggerBase: triggerPossibility100, magnification: magnificationNone, triggerTarget: triggerTargetDamageControl, buffTarget: buffTargetNone, callingBuffName: SkillName.none, debuffTarget: debuffTargetNone);
 
-            skillsMasters[11] = new SkillsMasterStruct(name: SkillName.ShiledHealplusSingle, actionType: ActionType.move, callSkillLogicName: CallSkillLogicName.ShieldHealSingle, isHeal: true, usageCount: 2, veiledTurn: 20, ability: Ability.generation,
+            skillsMasters[11] = new SkillsMasterStruct(name: SkillName.ShiledHealplusSingle, actionType: ActionType.move, callSkillLogicName: CallSkillLogicName.ShieldHealSingle, isHeal: true, usageCount: 1, veiledTurn: 20, ability: Ability.generation,
              triggerBase: triggerPossibility100, magnification: magnificationHeal40, triggerTarget: triggerTargetDamageControl, buffTarget: buffTargetNone, callingBuffName: SkillName.none, debuffTarget: debuffTargetNone);
-            skillsMasters[12] = new SkillsMasterStruct(name: SkillName.ShiledHealSingle, actionType: ActionType.move, callSkillLogicName: CallSkillLogicName.ShieldHealSingle, isHeal: true, usageCount: 3, veiledTurn: 20, ability: Ability.generation,
+            skillsMasters[12] = new SkillsMasterStruct(name: SkillName.ShiledHealSingle, actionType: ActionType.move, callSkillLogicName: CallSkillLogicName.ShieldHealSingle, isHeal: true, usageCount: 2, veiledTurn: 20, ability: Ability.generation,
              triggerBase: triggerPossibility100, magnification: magnificationHeal20, triggerTarget: triggerTargetDamageControl, buffTarget: buffTargetNone, callingBuffName: SkillName.none, debuffTarget: debuffTargetNone);
 
             skillsMasters[13] = new SkillsMasterStruct(name: SkillName.BarrierAll, actionType: ActionType.atBeginning, callSkillLogicName: CallSkillLogicName.none, isHeal: false, usageCount: 2, veiledTurn: 20, ability: Ability.none,
@@ -407,11 +408,10 @@ namespace BattleEngine
                                         order.SkillEffectChosen.NextAccumulationCount += (int)(order.SkillEffectChosen.Skill.TriggerBase.AccumulationBaseRate * order.SkillEffectChosen.Skill.TriggerBase.AccumulationWeight);
                                     }
 
-                                    log += BuffDebuffFunction(order: order, characters: characters, effects: effects, buffMasters: buffMasters, turn: turn); //Buff, debuff action
                                     log += SkillLogicDispatcher(order: order, characters: characters, r: r); // SkillLogic action include damage control assist.
+                                    log += BuffDebuffFunction(order: order, characters: characters, effects: effects, buffMasters: buffMasters, turn: turn); //Buff, debuff action
                                     result = SkillMoveFunction(order: order, characters: characters, r: r); // offense action
                                     log += result.log;
-                                    log += new string(' ', 2) + "-------------\n";
 
                                     battleResult = result.battleResult;
 
@@ -497,7 +497,10 @@ namespace BattleEngine
                                     while (skillTriggerPossibilityCheck != null && skillTriggerPossibilityCheck.Count > 0) { orders.Push(skillTriggerPossibilityCheck.Pop()); }
 
                                     //Navigation Logic
-                                    Console.WriteLine(turn + " "+ order.Actor.Name + " " + orderStatus.CounterSkillCount + " " + orderStatus.DamageControlAssistCount);
+                                    NavigatorSpeechAfterMoveClass navigatorSpeechAfterMove = new NavigatorSpeechAfterMoveClass(navigatorName: navigatorName, order: order,
+                                        characters: characters, effects: effects, orderStatus: orderStatus, turn: turn, r: r);
+                                    log += navigatorSpeechAfterMove.Log;
+                                    log += new string(' ', 2) + "-------------\n";
 
                                 }  // Until all Characters act.
 
@@ -905,6 +908,7 @@ triggeredPossibility: TriggerPossibilityRate(skillsMaster: skillsMasters[11], ch
             List<EffectClass> addingEffect = new List<EffectClass>();
             string log = null;
             if (order.SkillEffectChosen == null) { return log; } // no effect exist, so no buff/ debuff happened
+            foreach (BattleUnit character in characters) { if (character.IsCrushedJustNow) { character.IsCrushedJustNow = false; } } // reset IsCrushedJustNow flag
             switch (order.SkillEffectChosen.Skill.BuffTarget.TargetType)
             {
                 case TargetType.self: //Buff self

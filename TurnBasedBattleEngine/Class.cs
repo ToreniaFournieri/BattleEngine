@@ -560,4 +560,41 @@ namespace BattleEngine
         public bool IsAllyWin { get; set; }
         public bool IsEnemyWin { get; set; }
     }
+
+    //NavigatorReaction
+    public class NavigatorSpeechAfterMoveClass
+    {
+        public NavigatorSpeechAfterMoveClass(string navigatorName, OrderClass order, List<BattleUnit> characters, List<EffectClass> effects, OrderStatusClass orderStatus, int turn, Random r)
+        {
+            this.Log = null;
+            // Status check
+
+            // [Damage Control check]
+            List<BattleUnit> justCrushedAlly = characters.FindAll(obj => obj.Affiliation == Affiliation.ally && obj.IsCrushedJustNow == true);
+            if (justCrushedAlly.Count > 0)
+            {
+                List<EffectClass> damageControlAssistAllyHave = effects.FindAll(obj => obj.Character.Affiliation == Affiliation.ally && obj.Character.Combat.HitPointCurrent > 0
+                && obj.Character.Feature.DamageControlAssist == true && obj.Skill.IsHeal == true); // get character who has damage control assist (doesnt matter can or cannot)
+
+                List<EffectClass> damageControlAssistAllyCan = effects.FindAll(obj => obj.Character.Affiliation == Affiliation.ally && obj.Character.Combat.HitPointCurrent > 0
+                 && obj.Character.Feature.DamageControlAssist == true && obj.Skill.IsHeal == true && obj.UsageCount > 0 && obj.VeiledFromTurn <= turn && obj.VeiledToTurn >= turn);
+
+
+                if (damageControlAssistAllyHave.Count > 0 && damageControlAssistAllyCan.Count == 0) // Damage control assist should be triggered but cannot..
+                {
+                    this.Log += new string(' ', 5) + navigatorName + ": Help " + justCrushedAlly[0].Name + " soon, " + damageControlAssistAllyHave[0].Character.Name + "! ";
+
+                    if (damageControlAssistAllyHave[0].IsntTriggeredBecause.AfterAllMoved == true) // moved already
+                    { this.Log += "You already moved and cannot? \n"; }
+                    else { this.Log += "Wait, you said no medic kit left? \n"; }
+                }
+
+            }
+
+        }
+
+        public string Log { get; }
+
+    }
+
 }

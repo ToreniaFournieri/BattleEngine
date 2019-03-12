@@ -591,8 +591,6 @@ namespace BattleEngine
                     else { this.Log += "Wait, you said no medic kit left? \n"; }
                 }
 
-                //back test
-
             }
 
         }

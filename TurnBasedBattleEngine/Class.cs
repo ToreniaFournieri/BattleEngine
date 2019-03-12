@@ -569,30 +569,62 @@ namespace BattleEngine
             this.Log = null;
             // Status check
 
-            // [Damage Control check]
+            // Ally [Damage Control check]
             List<BattleUnit> justCrushedAlly = characters.FindAll(obj => obj.Affiliation == Affiliation.ally && obj.IsCrushedJustNow == true);
             if (justCrushedAlly.Count > 0)
             {
-                List<EffectClass> damageControlAssistAllyHave = effects.FindAll(obj => obj.Character.Affiliation == Affiliation.ally && obj.Character.Combat.HitPointCurrent > 0
+                List<EffectClass> damageControlAssistCharacterHave = effects.FindAll(obj => obj.Character.Affiliation == Affiliation.ally && obj.Character.Combat.HitPointCurrent > 0
                 && obj.Character.Feature.DamageControlAssist == true && obj.Skill.IsHeal == true); // get character who has damage control assist (doesnt matter can or cannot)
-
-                List<EffectClass> damageControlAssistAllyCan = effects.FindAll(obj => obj.Character.Affiliation == Affiliation.ally && obj.Character.Combat.HitPointCurrent > 0
-                 && obj.Character.Feature.DamageControlAssist == true && obj.Skill.IsHeal == true && obj.UsageCount > 0 && obj.VeiledFromTurn <= turn && obj.VeiledToTurn >= turn);
-
-
-                    //damageControlAssistAllyCan.Count
-
-                if (damageControlAssistAllyHave.Count > 0 && orderStatus.DamageControlAssistCount == 0) // Damage control assist should be triggered but cannot..
+                if (damageControlAssistCharacterHave.Count > 0 && orderStatus.DamageControlAssistCount == 0) // Damage control assist should be triggered but cannot..
                 {
-                    this.Log += new string(' ', 5) + navigatorName + ": Help " + justCrushedAlly[0].Name + " soon, " + damageControlAssistAllyHave[0].Character.Name + "! ";
+                    string crushedCountText = "Help " + justCrushedAlly[0].Name + " soon,";
+                    if (justCrushedAlly.Count >= 2) { crushedCountText = justCrushedAlly.Count + " allys are being crushed." + " Help them soon!"; }
 
-                    if (damageControlAssistAllyHave[0].IsntTriggeredBecause.AfterAllMoved == true) // moved already
-                    { this.Log += "You already moved and cannot? \n"; }  //  wrong?
+                    this.Log += new string(' ', 5) + navigatorName + ": " + crushedCountText + " " + damageControlAssistCharacterHave[0].Character.Name + "! ";
+                    if (damageControlAssistCharacterHave[0].IsntTriggeredBecause.AfterAllMoved == true) // moved already
+                    { this.Log += "You already moved and cannot? \n"; }
                     else { this.Log += "Wait, you said no medic kit left? \n"; }
                 }
+                else if (damageControlAssistCharacterHave.Count == 0 && orderStatus.DamageControlAssistCount == 0)
+                {
+                    string speechText = null;
+                    if (justCrushedAlly.Count == 1) { speechText = "ally is being crushed."; } else { speechText = "allys are being crushed."; }
+                    string crushedMedicText = null;
+                    List<EffectClass> isMedicCrushed = effects.FindAll(obj => obj.Character.Affiliation == Affiliation.ally && obj.Character.Combat.HitPointCurrent == 0
+                        && obj.Character.Feature.DamageControlAssist == true && obj.Skill.IsHeal == true); // dead
 
+                    if (isMedicCrushed.Count == 0) { crushedMedicText = " We need a medic."; } else
+                     { crushedMedicText = " Now we lost a medic, I wish " + isMedicCrushed[0].Character.Name + " survived."; }
+
+                    this.Log += new string(' ', 5) + speechText + crushedMedicText + " \n";
+                }
             }
 
+            // Enemy [Damage Control check]
+            List<BattleUnit> justCrushedEnemy = characters.FindAll(obj => obj.Affiliation == Affiliation.enemy && obj.IsCrushedJustNow == true);
+            if (justCrushedEnemy.Count > 0)
+            {
+
+
+                string speechText = null;
+                switch (justCrushedEnemy.Count)
+                {
+                    case 1:
+                        speechText = justCrushedEnemy[0].Name + " is crushed, well done " + order.Actor.Name + "."; break;
+                    case 2:
+                        speechText = "Double crushed! good job " + order.Actor.Name + "."; break;
+                    case 3:
+                        speechText = "Triple crushed! " + order.Actor.Name + ", Keep going."; break;
+                    default:
+                        speechText = "Wow, " + justCrushedEnemy.Count + " enemys are down. " + order.Actor.Name + ", you are amazing!"; break;
+                }
+                string damageControlText = null; if (orderStatus.DamageControlAssistCount > 0)
+                {
+                    string targetText = null; if (justCrushedEnemy.Count == 1) { targetText = "it"; } else { targetText = "them"; }
+                    damageControlText = " But, the enemy is going to rescue " + targetText + ".";
+                }
+                this.Log += new string(' ', 5) + navigatorName + ": " + speechText + damageControlText + "\n";
+            }
         }
 
         public string Log { get; }

@@ -602,10 +602,8 @@ namespace BattleEngine
 
             // Enemy [Damage Control check]
             List<BattleUnit> justCrushedEnemy = characters.FindAll(obj => obj.Affiliation == Affiliation.enemy && obj.IsCrushedJustNow == true);
-            if (justCrushedEnemy.Count > 0)
+            if (justCrushedEnemy.Count > 0 && orderStatus.DamageControlAssistCount == 0)
             {
-
-
                 string speechText = null;
                 switch (justCrushedEnemy.Count)
                 {
@@ -618,12 +616,7 @@ namespace BattleEngine
                     default:
                         speechText = "Wow, " + justCrushedEnemy.Count + " enemys are down. " + order.Actor.Name + ", you are amazing!"; break;
                 }
-                string damageControlText = null; if (orderStatus.DamageControlAssistCount > 0)
-                {
-                    string targetText = null; if (justCrushedEnemy.Count == 1) { targetText = "it"; } else { targetText = "them"; }
-                    damageControlText = " But, the enemy is going to rescue " + targetText + ".";
-                }
-                this.Log += new string(' ', 5) + navigatorName + ": " + speechText + damageControlText + "\n";
+                this.Log += new string(' ', 5) + navigatorName + ": " + speechText + "\n";
             }
         }
 

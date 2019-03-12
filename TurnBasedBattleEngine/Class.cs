@@ -592,7 +592,6 @@ namespace BattleEngine
                 }
 
                 //back test
-                string test = null;
 
             }
 

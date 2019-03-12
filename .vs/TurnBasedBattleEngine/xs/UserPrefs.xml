@@ -1,18 +1,11 @@
 ﻿<Properties StartupConfiguration="{600E319E-5CC7-481E-830C-7FA3F3F9B2A0}|Default">
   <MonoDevelop.Ide.Workbench ActiveDocument="TurnBasedBattleEngine/Class.cs">
     <Files>
-<<<<<<< HEAD
       <File FileName="TurnBasedBattleEngine/Program.cs" Line="239" Column="137" />
       <File FileName="TurnBasedBattleEngine/AttackFunction.cs" Line="25" Column="73" />
       <File FileName="TurnBasedBattleEngine/BattleUnit.cs" Line="28" Column="47" />
       <File FileName="TurnBasedBattleEngine Status" />
       <File FileName="TurnBasedBattleEngine/Class.cs" Line="1" Column="1" />
-=======
-      <File FileName="TurnBasedBattleEngine/Program.cs" Line="166" Column="207" />
-      <File FileName="TurnBasedBattleEngine/Class.cs" Line="571" Column="1" />
-      <File FileName="TurnBasedBattleEngine/AttackFunction.cs" Line="25" Column="73" />
-      <File FileName="TurnBasedBattleEngine/BattleUnit.cs" Line="28" Column="47" />
->>>>>>> parent of b499c4a... after update solution
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />

@@ -580,12 +580,14 @@ namespace BattleEngine
                  && obj.Character.Feature.DamageControlAssist == true && obj.Skill.IsHeal == true && obj.UsageCount > 0 && obj.VeiledFromTurn <= turn && obj.VeiledToTurn >= turn);
 
 
-                if (damageControlAssistAllyHave.Count > 0 && damageControlAssistAllyCan.Count == 0) // Damage control assist should be triggered but cannot..
+                    //damageControlAssistAllyCan.Count
+
+                if (damageControlAssistAllyHave.Count > 0 && orderStatus.DamageControlAssistCount == 0) // Damage control assist should be triggered but cannot..
                 {
                     this.Log += new string(' ', 5) + navigatorName + ": Help " + justCrushedAlly[0].Name + " soon, " + damageControlAssistAllyHave[0].Character.Name + "! ";
 
                     if (damageControlAssistAllyHave[0].IsntTriggeredBecause.AfterAllMoved == true) // moved already
-                    { this.Log += "You already moved and cannot? \n"; }
+                    { this.Log += "You already moved and cannot? \n"; }  //  wrong?
                     else { this.Log += "Wait, you said no medic kit left? \n"; }
                 }
 

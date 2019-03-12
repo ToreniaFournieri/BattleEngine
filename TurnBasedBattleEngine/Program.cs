@@ -24,6 +24,7 @@ namespace BattleEngine
             FuncBattleConditionsText text = null;
             WipeOutCheck wipeOutCheck = null;
             int seed = (int)DateTime.Now.Ticks; // when you find something wrong, use seed value to Reproduction the situation
+            //int seedEmu = 1210466014;
             Random r = new Random(seed);
 
             // System initialize : Do not change them.
@@ -163,9 +164,9 @@ namespace BattleEngine
             skillsMasters[6] = new SkillsMasterStruct(name: SkillName.ShiledHealAll, actionType: ActionType.move, callSkillLogicName: CallSkillLogicName.ShieldHealMulti, isHeal: false, usageCount: 1, veiledTurn: 20, ability: Ability.generation,
              triggerBase: triggerPossibility100, magnification: magnificationNone, triggerTarget: triggerTargetDamageControl, buffTarget: buffTargetNone, callingBuffName: SkillName.none, debuffTarget: debuffTargetNone);
 
-            skillsMasters[11] = new SkillsMasterStruct(name: SkillName.ShiledHealplusSingle, actionType: ActionType.move, callSkillLogicName: CallSkillLogicName.ShieldHealSingle, isHeal: true, usageCount: 1, veiledTurn: 20, ability: Ability.generation,
+            skillsMasters[11] = new SkillsMasterStruct(name: SkillName.ShiledHealplusSingle, actionType: ActionType.move, callSkillLogicName: CallSkillLogicName.ShieldHealSingle, isHeal: true, usageCount: 2, veiledTurn: 20, ability: Ability.generation,
              triggerBase: triggerPossibility100, magnification: magnificationHeal40, triggerTarget: triggerTargetDamageControl, buffTarget: buffTargetNone, callingBuffName: SkillName.none, debuffTarget: debuffTargetNone);
-            skillsMasters[12] = new SkillsMasterStruct(name: SkillName.ShiledHealSingle, actionType: ActionType.move, callSkillLogicName: CallSkillLogicName.ShieldHealSingle, isHeal: true, usageCount: 2, veiledTurn: 20, ability: Ability.generation,
+            skillsMasters[12] = new SkillsMasterStruct(name: SkillName.ShiledHealSingle, actionType: ActionType.move, callSkillLogicName: CallSkillLogicName.ShieldHealSingle, isHeal: true, usageCount: 3, veiledTurn: 20, ability: Ability.generation,
              triggerBase: triggerPossibility100, magnification: magnificationHeal20, triggerTarget: triggerTargetDamageControl, buffTarget: buffTargetNone, callingBuffName: SkillName.none, debuffTarget: debuffTargetNone);
 
             skillsMasters[13] = new SkillsMasterStruct(name: SkillName.BarrierAll, actionType: ActionType.atBeginning, callSkillLogicName: CallSkillLogicName.none, isHeal: false, usageCount: 2, veiledTurn: 20, ability: Ability.none,

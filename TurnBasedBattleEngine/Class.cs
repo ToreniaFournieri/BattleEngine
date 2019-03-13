@@ -593,11 +593,16 @@ namespace BattleEngine
                     List<EffectClass> isMedicCrushed = effects.FindAll(obj => obj.Character.Affiliation == Affiliation.ally && obj.Character.Combat.HitPointCurrent == 0
                         && obj.Character.Feature.DamageControlAssist == true && obj.Skill.IsHeal == true); // dead
 
-                    if (isMedicCrushed.Count == 0) { crushedMedicText = " We need a medic."; } else
-                     { crushedMedicText = " Now we lost a medic, I wish " + isMedicCrushed[0].Character.Name + " survived."; }
+                    if (isMedicCrushed.Count == 0) { crushedMedicText = " We need a medic."; }
+                    else
+                    { crushedMedicText = " Now we lost a medic, I wish " + isMedicCrushed[0].Character.Name + " survived."; }
 
-                    this.Log += new string(' ', 5) + speechText + crushedMedicText + " \n";
+                    this.Log += new string(' ', 5) + navigatorName + ": " + speechText + crushedMedicText + " \n";
                 }
+                else if (orderStatus.DamageControlAssistCount > 0)
+                { this.Log += new string(' ', 5) + "(should triggered damage control assist.)  \n"; }
+                else // when happened
+                { this.Log += new string(' ', 5) + "(unexpected..) \n"; }
             }
 
             // Enemy [Damage Control check]

@@ -319,12 +319,6 @@ namespace BattleEngine
                             for (int i = 0; i < numberOfCharacters; i++) { characters[i].Buff.InitializeBuff(); }
                             foreach (EffectClass effect in effects) { effect.BuffToCharacter(currentTurn: turn); }
 
-                            //Battle conditions output
-
-
-
-                            // Action phase:2 main action
-                            // Action phase:3 at Ending
                             for (int actionPhase = 0; actionPhase <= 3; actionPhase++)
                             {
                                 Stack<OrderClass> skillTriggerPossibilityCheck;
@@ -377,7 +371,6 @@ namespace BattleEngine
                                         log += shiledHeal.Log;
                                         break;
                                 }
-
 
                                 //------------------------Action phase------------------------
                                 //Action for each character by action order.
@@ -472,14 +465,14 @@ namespace BattleEngine
                                     skillTriggerPossibilityCheck = SkillTriggerPossibilityCheck(actor: null, effects: effects, characters: characters,
                                      attackerOrder: order, orders: orders, actionType: ActionType.counter, shouldHeal: false, isDamageControlAssist: false,
                                         battleResult: battleResult, individualTargetID: order.Actor.UniqueID, turn: turn, r: r);
-                                    if (skillTriggerPossibilityCheck != null) { orderStatus.CounterSkillCount = skillTriggerPossibilityCheck.Count; }
+                                    if (skillTriggerPossibilityCheck != null ) { orderStatus.CounterSkillCount = skillTriggerPossibilityCheck.Count; }
                                     while (skillTriggerPossibilityCheck != null && skillTriggerPossibilityCheck.Count > 0) { orders.Push(skillTriggerPossibilityCheck.Pop()); }
 
                                     //[[ SKILLS CHECK ]] Chain skills trigger.
                                     skillTriggerPossibilityCheck = SkillTriggerPossibilityCheck(actor: null, effects: effects, characters: characters,
                                      attackerOrder: order, orders: orders, actionType: ActionType.chain, shouldHeal: false, isDamageControlAssist: false,
                                       battleResult: battleResult, individualTargetID: order.Actor.UniqueID, turn: turn, r: r);
-                                    if (skillTriggerPossibilityCheck != null) { orderStatus.ChainSkillCount = skillTriggerPossibilityCheck.Count; }
+                                    if (skillTriggerPossibilityCheck != null ) { orderStatus.ChainSkillCount = skillTriggerPossibilityCheck.Count; }
                                     while (skillTriggerPossibilityCheck != null && skillTriggerPossibilityCheck.Count > 0) { orders.Push(skillTriggerPossibilityCheck.Pop()); }
 
                                     //[[ SKILLS CHECK ]] ReAttack skills trigger.

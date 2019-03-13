@@ -629,4 +629,22 @@ namespace BattleEngine
 
     }
 
+    public class BattleLogClass
+    {
+        public BattleLogClass()
+        {
+
+        }
+        public int Wave { get; }
+        public int Turn { get; }
+        public int Phase { get; }
+        public int OrderNumber { get; }
+        public int Nest { get; }
+        public int NestOrderNumber { get; }
+        public string LogText { get; }
+        public int Importance { get; }
+    }
+
+
+
 }

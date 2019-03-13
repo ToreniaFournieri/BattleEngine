@@ -365,11 +365,9 @@ namespace BattleEngine
                                         log += new string(' ', 1) + "[At ending phase] \n";
 
                                         //something..
-
                                         //Heal Shiled by generation %
                                         ShiledHealFunction shiledHeal = new ShiledHealFunction(characters: characters);
-                                        log += shiledHeal.Log;
-                                        break;
+                                        log += shiledHeal.Log; break;
                                 }
 
                                 //------------------------Action phase------------------------
@@ -465,14 +463,14 @@ namespace BattleEngine
                                     skillTriggerPossibilityCheck = SkillTriggerPossibilityCheck(actor: null, effects: effects, characters: characters,
                                      attackerOrder: order, orders: orders, actionType: ActionType.counter, shouldHeal: false, isDamageControlAssist: false,
                                         battleResult: battleResult, individualTargetID: order.Actor.UniqueID, turn: turn, r: r);
-                                    if (skillTriggerPossibilityCheck != null ) { orderStatus.CounterSkillCount = skillTriggerPossibilityCheck.Count; }
+                                    if (skillTriggerPossibilityCheck != null) { orderStatus.CounterSkillCount = skillTriggerPossibilityCheck.Count; }
                                     while (skillTriggerPossibilityCheck != null && skillTriggerPossibilityCheck.Count > 0) { orders.Push(skillTriggerPossibilityCheck.Pop()); }
 
                                     //[[ SKILLS CHECK ]] Chain skills trigger.
                                     skillTriggerPossibilityCheck = SkillTriggerPossibilityCheck(actor: null, effects: effects, characters: characters,
                                      attackerOrder: order, orders: orders, actionType: ActionType.chain, shouldHeal: false, isDamageControlAssist: false,
                                       battleResult: battleResult, individualTargetID: order.Actor.UniqueID, turn: turn, r: r);
-                                    if (skillTriggerPossibilityCheck != null ) { orderStatus.ChainSkillCount = skillTriggerPossibilityCheck.Count; }
+                                    if (skillTriggerPossibilityCheck != null) { orderStatus.ChainSkillCount = skillTriggerPossibilityCheck.Count; }
                                     while (skillTriggerPossibilityCheck != null && skillTriggerPossibilityCheck.Count > 0) { orders.Push(skillTriggerPossibilityCheck.Pop()); }
 
                                     //[[ SKILLS CHECK ]] ReAttack skills trigger.

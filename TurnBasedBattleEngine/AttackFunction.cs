@@ -325,16 +325,22 @@ namespace BattleEngine
                         if (opponents[fTargetColumn].IsBarrierBrokenJustNow) { barrierWords = " [Barrier Broken]"; }
                         else if (opponents[fTargetColumn].Buff.BarrierRemaining > 0) { barrierWords = " [Barriered(" + opponents[fTargetColumn].Buff.BarrierRemaining + ")]"; }
 
+                        double shiledRatio = Math.Round(((double)opponents[fTargetColumn].Combat.ShiledCurrent / (double)opponents[fTargetColumn].Combat.ShiledMax * 100), 0);
+                        double hpRatio = Math.Round(((double)opponents[fTargetColumn].Combat.HitPointCurrent / (double)opponents[fTargetColumn].Combat.HitPointMax * 100), 0);
+                        double damageRatio = Math.Round(((double)totalDealtDamages[opponents[fTargetColumn].UniqueID]
+                                            / ((double)opponents[fTargetColumn].Combat.ShiledMax + (double)opponents[fTargetColumn].Combat.HitPointMax) * 100), 0);
+                        string sign = " "; if (damageRatio > 0) { sign = "-"; }
+
                         string s = null;
                         if (totalIndivisualHits[opponents[fTargetColumn].UniqueID] != 1) { s = "s"; }
-                        int shiledPercentSpace = (3 - Math.Round(((double)opponents[fTargetColumn].Combat.ShiledCurrent / (double)opponents[fTargetColumn].Combat.ShiledMax * 100), 0).WithComma().Length);
-                        int hPPercentSpace = (3 - Math.Round(((double)opponents[fTargetColumn].Combat.HitPointCurrent / (double)opponents[fTargetColumn].Combat.HitPointMax * 100), 0).WithComma().Length);
+                        int shiledPercentSpace = (3 - shiledRatio.WithComma().Length);
+                        int hPPercentSpace = (3 - hpRatio.WithComma().Length);
                         int damageSpace = (6 - totalDealtDamages[opponents[fTargetColumn].UniqueID].WithComma().Length);
+                        int damageRateSpace = (4 - sign.Length - damageRatio.ToString().Length);
 
-                        Log += new string(' ', 4) + opponents[fTargetColumn].Name
-                            + " (Sh" + new string(' ', shiledPercentSpace) + Math.Round(((double)opponents[fTargetColumn].Combat.ShiledCurrent / (double)opponents[fTargetColumn].Combat.ShiledMax * 100), 0).WithComma()
-                        + "% HP" + new string(' ', hPPercentSpace) + Math.Round(((double)opponents[fTargetColumn].Combat.HitPointCurrent / (double)opponents[fTargetColumn].Combat.HitPointMax * 100), 0).WithComma()
-                         + "%)" + " gets " + new string(' ', damageSpace) + totalDealtDamages[opponents[fTargetColumn].UniqueID].WithComma() + " damage" + crushed + " Hit" + s + ":"
+                        Log += new string(' ', 4) + opponents[fTargetColumn].Name + " (Sh" + new string(' ', shiledPercentSpace) + shiledRatio.WithComma() + "% HP" + new string(' ', hPPercentSpace)
+                        + hpRatio.WithComma() + "%)" + " gets " + new string(' ', damageSpace) + totalDealtDamages[opponents[fTargetColumn].UniqueID].WithComma() + " damage ("
+                        + new string(' ', damageRateSpace) + sign + damageRatio + "%)" + crushed + " Hit" + s + ":"
                         + totalIndivisualHits[opponents[fTargetColumn].UniqueID] + barrierWords + optimumRangeWords + " \n";
 
                         if (opponents[fTargetColumn].IsOptimumTarget) { opponents[fTargetColumn].IsOptimumTarget = false; } //clear IsOptimumTarget to false

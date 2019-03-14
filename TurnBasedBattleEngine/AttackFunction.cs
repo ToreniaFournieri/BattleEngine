@@ -10,6 +10,7 @@ namespace BattleEngine
     {
         public AttackFunction(OrderClass order, List<BattleUnit> characters, Random r)
         {
+            string log = null;
             this.BattleResult = new BattleResultClass();
             // Target control
             Affiliation toTargetAffiliation; if (order.Actor.Affiliation == Affiliation.ally) { toTargetAffiliation = Affiliation.enemy; } //ally's move, so target should be enemy, without confusion.
@@ -308,7 +309,7 @@ namespace BattleEngine
 
                 string speedText = null; if (order.ActionSpeed > 0) { speedText = " Speed:" + order.ActionSpeed; }
 
-                Log += new string(' ', 2) + order.Actor.Name + "'s " + criticalWords + skillName + skillTriggerPossibility + " "
+                log += new string(' ', 0) + order.Actor.Name + "'s " + criticalWords + skillName + skillTriggerPossibility + " "
                 + order.Actor.Combat.NumberOfAttacks + "time" + sNumberofAttacks +
                  " total hit" + snumberOfSuccessAttacks + ":" + numberOfSuccessAttacks + majorityElement + speedText + "\n";
 
@@ -338,7 +339,7 @@ namespace BattleEngine
                         int damageSpace = (6 - totalDealtDamages[opponents[fTargetColumn].UniqueID].WithComma().Length);
                         int damageRateSpace = (4 - sign.Length - damageRatio.ToString().Length);
 
-                        Log += new string(' ', 4) + opponents[fTargetColumn].Name + " (Sh" + new string(' ', shiledPercentSpace) + shiledRatio.WithComma() + "% HP" + new string(' ', hPPercentSpace)
+                        log += new string(' ', 4) + opponents[fTargetColumn].Name + " (Sh" + new string(' ', shiledPercentSpace) + shiledRatio.WithComma() + "% HP" + new string(' ', hPPercentSpace)
                         + hpRatio.WithComma() + "%)" + " gets " + new string(' ', damageSpace) + totalDealtDamages[opponents[fTargetColumn].UniqueID].WithComma() + " damage ("
                         + new string(' ', damageRateSpace) + sign + damageRatio + "%)" + crushed + " Hit" + s + ":"
                         + totalIndivisualHits[opponents[fTargetColumn].UniqueID] + barrierWords + optimumRangeWords + " \n";
@@ -355,17 +356,19 @@ namespace BattleEngine
                     BattleResult.TotalDeltDamage = totalDealtDamageSum;
                 } //fTargetColumn
 
-                if (numberOfSuccessAttacks == 0) { Log += new string(' ', 4) + "All attacks missed...  \n"; }
+                if (numberOfSuccessAttacks == 0) { log += new string(' ', 4) + "All attacks missed...  \n"; }
 
                 //Absorb log
-                if (healedByAbsorbShiled > 0) { Log += new string(' ', 3) + order.Actor.Name + " absorbs shield by " + healedByAbsorbShiled + ". \n"; }
+                if (healedByAbsorbShiled > 0) { log += new string(' ', 3) + order.Actor.Name + " absorbs shield by " + healedByAbsorbShiled + ". \n"; }
 
+                OrderConditionClass orderCondition = order.OrderCondition;
+                BattleLog = new BattleLogClass(orderCondition: orderCondition, isNavigation: false, log: log, importance: 1);
             }
         }
 
         public BattleResultClass BattleResult { get; }
         public WipeOutCheck WipeOutCheck { get; set; }
-        public string Log { get; }
+        public BattleLogClass BattleLog { get; }
     }
 
 }

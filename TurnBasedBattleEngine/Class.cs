@@ -90,23 +90,6 @@ namespace BattleEngine
         public DebuffTargetParameterClass DebuffTarget { get; }
     }
 
-    public class BattleResultClass
-    {
-        public BattleResultClass()
-        {
-            this.BattleEnd = false; this.IsAllyWin = false; this.IsEnemyWin = false; this.IsDraw = false; this.NumberOfCrushed = 0; this.TotalDeltDamage = 0;
-            this.CriticalOrNot = CriticalOrNot.any; this.HitMoreThanOnceCharacters = new List<BattleUnit>(); this.AvoidMoreThanOnceCharacters = new List<BattleUnit>();
-        }
-        public bool BattleEnd;
-        public bool IsAllyWin;
-        public bool IsEnemyWin;
-        public bool IsDraw;
-        public int NumberOfCrushed;
-        public int TotalDeltDamage;
-        public CriticalOrNot CriticalOrNot;
-        public List<BattleUnit> HitMoreThanOnceCharacters;
-        public List<BattleUnit> AvoidMoreThanOnceCharacters;
-    }
 
     public static class ObjectExtensions { public static string WithComma(this object self) { return string.Format("{0:#,##0}", self); } } //With comma override Object
 
@@ -118,7 +101,7 @@ namespace BattleEngine
         {
             string damageControlAssistText = null;
             if (order.IsDamageControlAssist) { damageControlAssistText = "[damage control assist] "; }
-            Log += new string(' ', 2) + order.Actor.Name + " " + damageControlAssistText + order.SkillEffectChosen.Skill.Name + " (Left:" + order.SkillEffectChosen.UsageCount + ") \n";
+            Log += new string(' ', 0) + order.Actor.Name + " " + damageControlAssistText + order.SkillEffectChosen.Skill.Name + " (Left:" + order.SkillEffectChosen.UsageCount + ") \n";
             double healBase = order.Actor.Ability.Generation * order.SkillEffectChosen.Skill.Magnification.Heal * 10.0;
 
             // heal only same affiliation
@@ -286,9 +269,9 @@ namespace BattleEngine
     //Action order class
     public class OrderClass
     {
-        public OrderClass(BattleUnit actor, ActionType actionType, ref List<EffectClass> skillEffectProposed, int actionSpeed, int individualTargetID, bool isDamageControlAssist)
+        public OrderClass(OrderConditionClass orderCondition,BattleUnit actor, ActionType actionType, ref List<EffectClass> skillEffectProposed, int actionSpeed, int individualTargetID, bool isDamageControlAssist)
         {
-            this.Actor = actor; this.ActionType = actionType; this.SkillEffectProposed = skillEffectProposed;
+            this.OrderCondition = orderCondition ; this.Actor = actor; this.ActionType = actionType; this.SkillEffectProposed = skillEffectProposed;
             this.ActionSpeed = actionSpeed; this.IndividualTargetID = individualTargetID; this.IsDamageControlAssist = isDamageControlAssist;
             // By default, first list of SkillEffectProposed is selected if has.
             // You need override others if you want to change it.
@@ -383,6 +366,7 @@ namespace BattleEngine
             }
         }
 
+        public OrderConditionClass OrderCondition;
         public BattleUnit Actor;
         public ActionType ActionType;
         public List<EffectClass> SkillEffectProposed;
@@ -629,22 +613,58 @@ namespace BattleEngine
 
     }
 
-    public class BattleLogClass
+    public class OrderConditionClass
     {
-        public BattleLogClass()
-        {
-
-        }
+        public OrderConditionClass(int wave, int turn, int phase, int orderNumber, int nest, int nestOrderNumber)
+        { Wave = wave; Turn = turn; Phase = phase; OrderNumber = orderNumber; Nest = nest; NestOrderNumber = nestOrderNumber; }
         public int Wave { get; }
         public int Turn { get; }
         public int Phase { get; }
-        public int OrderNumber { get; }
-        public int Nest { get; }
-        public int NestOrderNumber { get; }
-        public string LogText { get; }
-        public int Importance { get; }
+        public int OrderNumber { get; set; }
+        public int Nest { get; set; }
+        public int NestOrderNumber { get; set; }
     }
 
+    public class BattleLogClass
+    {
+        public BattleLogClass() { } // for null call
+        public BattleLogClass(OrderConditionClass orderCondition, bool isNavigation, string log, int importance)
+        { OrderCondition = orderCondition; IsNavigation = isNavigation; Importance = importance; Log = log; }
 
+        public OrderConditionClass OrderCondition { get; }
+        bool IsNavigation { get; }
+        public int Importance { get; }
+        public string Log { get; }
+    }
+
+    public class BattleResultClass
+    {
+        public BattleResultClass()
+        {
+            this.BattleEnd = false; this.IsAllyWin = false; this.IsEnemyWin = false; this.IsDraw = false; this.NumberOfCrushed = 0; this.TotalDeltDamage = 0;
+            this.CriticalOrNot = CriticalOrNot.any; this.HitMoreThanOnceCharacters = new List<BattleUnit>(); this.AvoidMoreThanOnceCharacters = new List<BattleUnit>();
+        }
+        public bool BattleEnd;
+        public bool IsAllyWin;
+        public bool IsEnemyWin;
+        public bool IsDraw;
+        public int NumberOfCrushed;
+        public int TotalDeltDamage;
+        public CriticalOrNot CriticalOrNot;
+        public List<BattleUnit> HitMoreThanOnceCharacters;
+        public List<BattleUnit> AvoidMoreThanOnceCharacters;
+    }
+
+    public class EnvironmentInfoClass
+    {
+        public EnvironmentInfoClass(int wave, int turn, int phase, int orderNumber, int nest, int nestOrderNumber, Random r)
+        { Wave = wave; Turn = turn; Phase = phase; R = r; }
+        public int Wave;
+        public int Turn;
+        public int Phase;
+        public Random R;
+
+
+    }
 
 }

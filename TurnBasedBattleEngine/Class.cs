@@ -251,12 +251,14 @@ namespace BattleEngine
             this.EnemyHappenedTurn = 0; this.EnemyCrushedCount = 0; this.EnemyTotalDealtDamage = 0; this.EnemyContentText = "No first Blood."; this.WhichWin = WhichWin.Draw;
         }
         public int BattleWave { get; set; }
+        public BattleLogClass BattleLogAlly { get; set; }
         public string AllyCharacterName { get; set; }
         public ActionType AllyActionType { get; set; }
         public int AllyHappenedTurn { get; set; }
         public int AllyCrushedCount { get; set; }
         public int AllyTotalDealtDamage { get; set; }
         public string AllyContentText { get; set; }
+        public BattleLogClass BattleLogEnemy { get; set; }
         public string EnemyCharacterName { get; set; }
         public ActionType EnemyActionType { get; set; }
         public int EnemyHappenedTurn { get; set; }
@@ -269,9 +271,9 @@ namespace BattleEngine
     //Action order class
     public class OrderClass
     {
-        public OrderClass(OrderConditionClass orderCondition,BattleUnit actor, ActionType actionType, ref List<EffectClass> skillEffectProposed, int actionSpeed, int individualTargetID, bool isDamageControlAssist)
+        public OrderClass(OrderConditionClass orderCondition, BattleUnit actor, ActionType actionType, ref List<EffectClass> skillEffectProposed, int actionSpeed, int individualTargetID, bool isDamageControlAssist)
         {
-            this.OrderCondition = orderCondition ; this.Actor = actor; this.ActionType = actionType; this.SkillEffectProposed = skillEffectProposed;
+            this.OrderCondition = orderCondition; this.Actor = actor; this.ActionType = actionType; this.SkillEffectProposed = skillEffectProposed;
             this.ActionSpeed = actionSpeed; this.IndividualTargetID = individualTargetID; this.IsDamageControlAssist = isDamageControlAssist;
             // By default, first list of SkillEffectProposed is selected if has.
             // You need override others if you want to change it.
@@ -585,9 +587,9 @@ namespace BattleEngine
                     this.Log += navigatorName + ": " + speechText + crushedMedicText + " \n";
                 }
                 else if (orderStatus.DamageControlAssistCount > 0)
-                { this.Log +=  "(should triggered damage control assist.)  \n"; }
+                { this.Log += "(should triggered damage control assist.)  \n"; }
                 else // when happened
-                { this.Log +=  "(unexpected..) \n"; }
+                { this.Log += "(unexpected..) \n"; }
             }
 
             // Enemy [Damage Control check]
@@ -606,7 +608,7 @@ namespace BattleEngine
                     default:
                         speechText = "Wow, " + justCrushedEnemy.Count + " enemys are down. " + order.Actor.Name + ", you are amazing!"; break;
                 }
-                this.Log +=  navigatorName + ": " + speechText + "\n";
+                this.Log += navigatorName + ": " + speechText + "\n";
             }
         }
 
@@ -625,7 +627,7 @@ namespace BattleEngine
         public int Nest { get; set; }
         public int NestOrderNumber { get; set; }
 
-        public override string ToString() 
+        public override string ToString()
         { return "Wave:" + Wave + " Turn:" + Turn + " Phase:" + Phase + " OrderNumber:" + OrderNumber + " Nest:" + Nest + " NestOrderNumber:" + NestOrderNumber; }
 
     }

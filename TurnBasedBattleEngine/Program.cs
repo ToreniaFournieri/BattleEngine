@@ -13,7 +13,7 @@ namespace BattleEngine
             // Battle environment setting
             int numberOfCharacters = 14;
             int battleWavesSets = 1;
-            int battleWaves = 2; // one set of battle 
+            int battleWaves = 1; // one set of battle 
             string navigatorName = "Navigator";
 
             //BattleWaveSet variables
@@ -344,49 +344,51 @@ namespace BattleEngine
                                     {
                                         case 0: //Battle conditions output
                                             environmentInfo.Phase = 0;
+                                            log += "\n";
                                             log += "------------------------------------\n";
                                             text = new FuncBattleConditionsText(currentTurn: turn, currentBattleWaves: currentBattleWaves, characters: characters);
                                             log += text.Text();
                                             orderCondition = new OrderConditionClass(wave: environmentInfo.Wave, turn: environmentInfo.Turn, phase: environmentInfo.Phase, orderNumber: 0, nest: 0, nestOrderNumber: 0);
                                             battleLog = new BattleLogClass(orderCondition: orderCondition, isNavigation: false, log: log, importance: 1);
                                             battleLogList.Add(battleLog);
+
                                             break;
                                         case 1: // Action phase:1 at beginning
                                             environmentInfo.Phase = 1; orderNumber = 0;
                                             log += new string(' ', 1) + "[At beging phase] \n";
+                                            orderCondition = new OrderConditionClass(wave: environmentInfo.Wave, turn: environmentInfo.Turn, phase: environmentInfo.Phase, orderNumber: orderNumber, nest: 0, nestOrderNumber: 0);
+                                            battleLog = new BattleLogClass(orderCondition: orderCondition, isNavigation: false, log: log, importance: 1);
+                                            battleLogList.Add(battleLog);
+
                                             // _/_/_/_/_/_/_/_/ At Beginning Skill _/_/_/_/_/_/_/_/_/_/
 
                                             skillTriggerPossibilityCheck = SkillTriggerPossibilityCheck(actor: null, effects: effects, characters: characters, attackerOrder: null,
                                             orders: orders, actionType: ActionType.atBeginning, shouldHeal: false, isDamageControlAssist: false, battleResult: null, individualTargetID: 0, nestNumber: 0, environmentInfo: environmentInfo);
-                                            while (skillTriggerPossibilityCheck != null && skillTriggerPossibilityCheck.Count > 0)
-                                            {
-                                                orders.Push(skillTriggerPossibilityCheck.Pop());
-                                                orderCondition = new OrderConditionClass(wave: environmentInfo.Wave, turn: environmentInfo.Turn, phase: environmentInfo.Phase, orderNumber: orderNumber, nest: 0, nestOrderNumber: 0);
-                                                battleLog = new BattleLogClass(orderCondition: orderCondition, isNavigation: false, log: log, importance: 1); orderNumber++;
-                                            }
+                                            while (skillTriggerPossibilityCheck != null && skillTriggerPossibilityCheck.Count > 0) { orders.Push(skillTriggerPossibilityCheck.Pop()); }
                                             break;
                                         case 2:
                                             environmentInfo.Phase = 2;
                                             log += new string(' ', 1) + "[Main action phase] \n";
+                                            orderCondition = new OrderConditionClass(wave: environmentInfo.Wave, turn: environmentInfo.Turn, phase: environmentInfo.Phase, orderNumber: 0, nest: 0, nestOrderNumber: 0);
+                                            battleLog = new BattleLogClass(orderCondition: orderCondition, isNavigation: false, log: log, importance: 1);
+                                            battleLogList.Add(battleLog);
 
                                             for (int i = 0; i <= aliveCharacters.Count - 1; i++)
                                             {
                                                 List<EffectClass> effectList = effects.FindAll((obj) => obj.Character == aliveCharacters[i] && obj.Skill.ActionType == ActionType.move
                                                 && obj.UsageCount > 0 && obj.VeiledFromTurn <= turn && obj.VeiledToTurn >= turn);
+                                                orderCondition = new OrderConditionClass(wave: environmentInfo.Wave, turn: environmentInfo.Turn, phase: environmentInfo.Phase, orderNumber: 0, nest: 0, nestOrderNumber: 0);
 
                                                 // Add normal attack skills
                                                 EffectClass normalAttackEffect = new EffectClass(character: aliveCharacters[i], skill: skillsMasters[14], actionType: ActionType.normalAttack, offenseEffectMagnification: 1.0,
                                                 triggeredPossibility: 1.0, isDamageControlAssistAble: false, usageCount: 1000, veiledFromTurn: 1, veiledToTurn: 20);
                                                 effectList.Add(normalAttackEffect);
-                                                orderCondition = new OrderConditionClass(wave: environmentInfo.Wave, turn: environmentInfo.Turn, phase: environmentInfo.Phase, orderNumber: 0, nest: 0, nestOrderNumber: 0);
-                                                battleLog = new BattleLogClass(orderCondition: orderCondition, isNavigation: false, log: log, importance: 1);
                                                 orderForSort.Add(new OrderClass(orderCondition: orderCondition, actor: aliveCharacters[i], actionType: ActionType.move, skillEffectProposed: ref effectList,
                                                 actionSpeed: (aliveCharacters[i].Ability.Responsiveness * r.Next(40 + aliveCharacters[i].Ability.Luck, 100)), individualTargetID: -1, isDamageControlAssist: false));
-
-
                                             }
                                             orderForSort.Sort((OrderClass x, OrderClass y) => x.ActionSpeed - y.ActionSpeed);
                                             orderNumber = orderForSort.Count(); foreach (OrderClass order in orderForSort) { order.OrderCondition.OrderNumber = orderNumber; orderNumber--; }
+
                                             for (int i = 0; i < orderForSort.Count; i++) { orders.Push(orderForSort[i]); }
                                             break;
                                         case 3:
@@ -402,6 +404,7 @@ namespace BattleEngine
 
                                             orderCondition = new OrderConditionClass(wave: environmentInfo.Wave, turn: environmentInfo.Turn, phase: environmentInfo.Phase, orderNumber: 0, nest: 0, nestOrderNumber: 0);
                                             battleLog = new BattleLogClass(orderCondition: orderCondition, isNavigation: false, log: log, importance: 1);
+                                            battleLogList.Add(battleLog);
 
                                             break;
                                     }
@@ -461,7 +464,7 @@ namespace BattleEngine
                                     {
                                         string es = null;
                                         if (battleResult.NumberOfCrushed != 1) { es = "es"; }
-                                        string t = "Turn:" + turn + " " + order.Actor.Name + "'s " + order.SkillEffectChosen.Skill.Name + ". first blood! total dealt damage:" + battleResult.TotalDeltDamage.WithComma() + " " + battleResult.NumberOfCrushed.WithComma() + " crush" + es + ".";
+                                        string t = order.Actor.Name + "'s " + order.SkillEffectChosen.Skill.Name + ". first blood! total dealt damage:" + battleResult.TotalDeltDamage.WithComma() + " " + battleResult.NumberOfCrushed.WithComma() + " crush" + es + ".";
                                         StatisticsReporterFirstBloodClass setStatisticsReporterFirstBlood = statisticsReporterFirstBlood.FindLast((obj) => obj.BattleWave == battleWave);
                                         setStatisticsReporterFirstBlood.AllyCharacterName = order.Actor.Name;
                                         setStatisticsReporterFirstBlood.AllyActionType = order.ActionType;
@@ -469,6 +472,7 @@ namespace BattleEngine
                                         setStatisticsReporterFirstBlood.AllyCrushedCount = battleResult.NumberOfCrushed;
                                         setStatisticsReporterFirstBlood.AllyTotalDealtDamage = battleResult.TotalDeltDamage;
                                         setStatisticsReporterFirstBlood.AllyContentText = t;
+                                        if (result.BattleLog != null) { setStatisticsReporterFirstBlood.BattleLogAlly = result.BattleLog; }
                                         allyFirstBlood = true;
 
                                     }
@@ -476,7 +480,7 @@ namespace BattleEngine
                                     {
                                         string es = null;
                                         if (battleResult.NumberOfCrushed != 1) { es = "es"; }
-                                        string t = "Turn:" + turn + " " + order.Actor.Name + "'s " + order.SkillEffectChosen.Skill.Name + ". first blood! total dealt damage:" + battleResult.TotalDeltDamage.WithComma() + " " + battleResult.NumberOfCrushed.WithComma() + " crush" + es + ".";
+                                        string t = order.Actor.Name + "'s " + order.SkillEffectChosen.Skill.Name + ". first blood! total dealt damage:" + battleResult.TotalDeltDamage.WithComma() + " " + battleResult.NumberOfCrushed.WithComma() + " crush" + es + ".";
                                         StatisticsReporterFirstBloodClass setStatisticsReporterFirstBlood = statisticsReporterFirstBlood.FindLast((obj) => obj.BattleWave == battleWave);
                                         setStatisticsReporterFirstBlood.EnemyCharacterName = order.Actor.Name;
                                         setStatisticsReporterFirstBlood.EnemyActionType = order.ActionType;
@@ -484,6 +488,7 @@ namespace BattleEngine
                                         setStatisticsReporterFirstBlood.EnemyCrushedCount = battleResult.NumberOfCrushed;
                                         setStatisticsReporterFirstBlood.EnemyTotalDealtDamage = battleResult.TotalDeltDamage;
                                         setStatisticsReporterFirstBlood.EnemyContentText = t;
+                                        if (result.BattleLog != null) { setStatisticsReporterFirstBlood.BattleLogEnemy = result.BattleLog; }
                                         enemyFirstBlood = true;
                                     }
 
@@ -522,13 +527,11 @@ namespace BattleEngine
                                     //Push order in reverse. counter -> chain -> reAttack -> Damage control assist
                                     //Push Counter
                                     if (counterStack != null) { orderStatus.CounterSkillCount = counterStack.Count; }
-                                    //while (counterStack != null && counterStack.Count > 0) { orders.Push(counterStack.Pop()); nestNumber++; }
                                     while (counterStack != null && counterStack.Count > 0) { orders.Push(counterStack.Pop()); nestNumber++; }
 
                                     //Push Chain
                                     if (chainStack != null) { orderStatus.ChainSkillCount = chainStack.Count; }
                                     while (chainStack != null && chainStack.Count > 0) { orders.Push(chainStack.Pop()); nestNumber++; }
-
 
                                     //Push ReAttack
                                     if (reAttackStack != null) { orderStatus.ReAttackSkillCount = reAttackStack.Count; }
@@ -540,7 +543,7 @@ namespace BattleEngine
 
                                     BattleLogClass battleLog = new BattleLogClass(orderCondition: order.OrderCondition, isNavigation: false, log: log, importance: 1);
                                     battleLogList.Add(battleLog);
-                                    
+
                                     //Navigation Logic
                                     string navigationLog = null;
                                     NavigatorSpeechAfterMoveClass navigatorSpeechAfterMove = new NavigatorSpeechAfterMoveClass(navigatorName: navigatorName, order: order,
@@ -607,7 +610,7 @@ namespace BattleEngine
                 if (statisticsReporterFirstBlood.FindAll((obj) => obj.WhichWin == WhichWin.allyWin).Any())
                 {
                     StatisticsReporterFirstBloodClass bestFirstBloodAlly = statisticsReporterFirstBlood.FindAll((obj) => obj.WhichWin == WhichWin.allyWin).OrderByDescending(obj => obj.AllyTotalDealtDamage).First();
-                    logPerWavesSets[battleWavesSet - 1] += "[Best shot] Waves: " + bestFirstBloodAlly.BattleWave + " " + bestFirstBloodAlly.AllyContentText + "\n";
+                    logPerWavesSets[battleWavesSet - 1] += "[Best shot]"+ bestFirstBloodAlly.AllyContentText + " "+ bestFirstBloodAlly.BattleLogAlly.OrderCondition + "\n";
                 }
                 logPerWavesSets[battleWavesSet - 1] += "Enemy info: MVP(times) \n";
                 foreach (var group in statisticsQueryEnemy) { logPerWavesSets[battleWavesSet - 1] += new string(' ', 2) + group.Subj + " (" + group.Count + ")."; }
@@ -615,7 +618,7 @@ namespace BattleEngine
                 if (statisticsReporterFirstBlood.FindAll((obj) => obj.WhichWin == WhichWin.enemyWin).Any())
                 {
                     StatisticsReporterFirstBloodClass bestFirstBloodEnemy = statisticsReporterFirstBlood.FindAll((obj) => obj.WhichWin == WhichWin.enemyWin).OrderByDescending(obj => obj.EnemyTotalDealtDamage).First();
-                    logPerWavesSets[battleWavesSet - 1] += "[Best shot] Waves: " + bestFirstBloodEnemy.BattleWave + " " + bestFirstBloodEnemy.EnemyContentText + "\n";
+                    logPerWavesSets[battleWavesSet - 1] += "[Best shot]" + bestFirstBloodEnemy.EnemyContentText + " " + bestFirstBloodEnemy.BattleLogEnemy.OrderCondition + "\n";
                 }
                 //Characters Statistics Collection
                 foreach (BattleUnit character in characters) { character.Statistics.Avarage(battleWaves: battleWaves); } // Avarage Calculation
@@ -632,7 +635,7 @@ namespace BattleEngine
             foreach (BattleLogClass battleLog in battleLogList)
             {
                 if (battleLog.IsNavigation == false)
-                { finalLog += "(" + battleLog.OrderCondition.OrderNumber + "-" + battleLog.OrderCondition.Nest + "-" + battleLog.OrderCondition.NestOrderNumber + ")" + battleLog.Log; }
+                { finalLog += "(" + battleLog.OrderCondition.Phase + "-" + battleLog.OrderCondition.OrderNumber + "-" + battleLog.OrderCondition.Nest + "-" + battleLog.OrderCondition.NestOrderNumber + ")" + battleLog.Log; }
                 else { finalLog += new string(' ', 5) + battleLog.Log; }
             }
 
@@ -835,7 +838,7 @@ namespace BattleEngine
                     int orderNumber = 0; int nest = 0; if (attackerOrder != null) { orderNumber = attackerOrder.OrderCondition.OrderNumber; nest = attackerOrder.OrderCondition.Nest; }
 
 
-                    OrderConditionClass orderCondition = new OrderConditionClass(wave: environmentInfo.Wave, turn: environmentInfo.Turn, phase: environmentInfo.Turn, orderNumber: orderNumber,
+                    OrderConditionClass orderCondition = new OrderConditionClass(wave: environmentInfo.Wave, turn: environmentInfo.Turn, phase: environmentInfo.Phase, orderNumber: orderNumber,
                         nest: nest + 1, nestOrderNumber: nestNumber);
 
                     skillsByOrder = new OrderClass(orderCondition: orderCondition, actor: character, actionType: actionType, skillEffectProposed: ref validEffectsPerActor, actionSpeed: 0,

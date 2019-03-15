@@ -39,7 +39,6 @@ namespace BattleEngine
                 int[] totalIndivisualHits = new int[characters.Count];
                 bool isNeedCreateTargetPossibilityBox = true;
                 List<int> targetPossibilityBox = new List<int>();
-                //int[] targetPossibilityBox = new int[200];
                 int totalTickets = 0;
 
                 // Skill effect magnification set in case order.SkillEffectChosen is null

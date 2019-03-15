@@ -132,7 +132,7 @@ namespace BattleEngine
                     }
                     else if (order.SkillEffectChosen.Skill.Magnification.AttackTarget == TargetType.single)// if individual target exist, choose he/she.
                     { toTarget = opponents.Find(character1 => character1.UniqueID == order.IndividualTargetID); }
-                    else { Console.WriteLine("unexpected. basic attack function, targetType is not single nor multi."); }
+                    else { Console.WriteLine("unexpected. basic attack function, targetType is not single nor multi. seed:" + environmentInfo.RandomSeed + " " + order.OrderCondition ); }
 
                     isNeedCreateTargetPossibilityBox = false;
 

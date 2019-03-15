@@ -310,7 +310,7 @@ namespace BattleEngine
 
                     while (battleEnd == false)
                     {
-                        EnvironmentInfoClass environmentInfo = new EnvironmentInfoClass(wave: battleWave, turn: 0, phase: 0, orderNumber: 0, nest: 0, nestOrderNumber: 0, r: r);
+                        EnvironmentInfoClass environmentInfo = new EnvironmentInfoClass(wave: battleWave, turn: 0, phase: 0, randomSeed: seed, r: r);
 
                         for (int turn = 1; turn <= 20; turn++)
                         {
@@ -540,12 +540,11 @@ namespace BattleEngine
 
                                     BattleLogClass battleLog = new BattleLogClass(orderCondition: order.OrderCondition, isNavigation: false, log: log, importance: 1);
                                     battleLogList.Add(battleLog);
-
-
+                                    
                                     //Navigation Logic
                                     string navigationLog = null;
                                     NavigatorSpeechAfterMoveClass navigatorSpeechAfterMove = new NavigatorSpeechAfterMoveClass(navigatorName: navigatorName, order: order,
-                                        characters: characters, effects: effects, orderStatus: orderStatus, turn: turn, r: r);
+                                        characters: characters, effects: effects, orderStatus: orderStatus, environmentInfo: environmentInfo);
 
                                     navigationLog += navigatorSpeechAfterMove.Log;
                                     navigationLog += new string(' ', 2) + "-------------\n";

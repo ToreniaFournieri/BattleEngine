@@ -548,7 +548,8 @@ namespace BattleEngine
     //NavigatorReaction
     public class NavigatorSpeechAfterMoveClass
     {
-        public NavigatorSpeechAfterMoveClass(string navigatorName, OrderClass order, List<BattleUnit> characters, List<EffectClass> effects, OrderStatusClass orderStatus, int turn, Random r)
+        public NavigatorSpeechAfterMoveClass(string navigatorName, OrderClass order, List<BattleUnit> characters, List<EffectClass> effects, OrderStatusClass orderStatus,
+         EnvironmentInfoClass environmentInfo)
         {
             this.Log = null;
             // Status check
@@ -623,6 +624,10 @@ namespace BattleEngine
         public int OrderNumber { get; set; }
         public int Nest { get; set; }
         public int NestOrderNumber { get; set; }
+
+        public override string ToString() 
+        { return "Wave:" + Wave + " Turn:" + Turn + " Phase:" + Phase + " OrderNumber:" + OrderNumber + " Nest:" + Nest + " NestOrderNumber:" + NestOrderNumber; }
+
     }
 
     public class BattleLogClass
@@ -657,14 +662,13 @@ namespace BattleEngine
 
     public class EnvironmentInfoClass
     {
-        public EnvironmentInfoClass(int wave, int turn, int phase, int orderNumber, int nest, int nestOrderNumber, Random r)
-        { Wave = wave; Turn = turn; Phase = phase; R = r; }
+        public EnvironmentInfoClass(int wave, int turn, int phase, int randomSeed, Random r)
+        { Wave = wave; Turn = turn; Phase = phase; RandomSeed = randomSeed; R = r; }
         public int Wave;
         public int Turn;
         public int Phase;
+        public int RandomSeed;
         public Random R;
-
-
     }
 
 }

@@ -586,7 +586,7 @@ namespace BattleEngine
                 else if (orderStatus.DamageControlAssistCount > 0)
                 { this.Log +=  "(should triggered damage control assist.)  \n"; }
                 else // when happened
-                { this.Log += "(unexpected..) \n"; }
+                { this.Log +=  "(unexpected..) \n"; }
             }
 
             // Enemy [Damage Control check]
@@ -605,7 +605,7 @@ namespace BattleEngine
                     default:
                         speechText = "Wow, " + justCrushedEnemy.Count + " enemys are down. " + order.Actor.Name + ", you are amazing!"; break;
                 }
-                this.Log += navigatorName + ": " + speechText + "\n";
+                this.Log +=  navigatorName + ": " + speechText + "\n";
             }
         }
 

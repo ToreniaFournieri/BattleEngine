@@ -336,7 +336,7 @@ namespace BattleEngine
                                 List<OrderClass> orderForSort = new List<OrderClass>();
 
                                 {
-                                    string log = null;
+                                    string log = null; int orderNumber = 0;
                                     BattleLogClass battleLog;
                                     OrderConditionClass orderCondition;
 
@@ -352,20 +352,22 @@ namespace BattleEngine
                                             battleLogList.Add(battleLog);
                                             break;
                                         case 1: // Action phase:1 at beginning
-                                            environmentInfo.Phase = 1;
+                                            environmentInfo.Phase = 1; orderNumber = 0;
                                             log += new string(' ', 1) + "[At beging phase] \n";
                                             // _/_/_/_/_/_/_/_/ At Beginning Skill _/_/_/_/_/_/_/_/_/_/
+
                                             skillTriggerPossibilityCheck = SkillTriggerPossibilityCheck(actor: null, effects: effects, characters: characters, attackerOrder: null,
-                                             orders: orders, actionType: ActionType.atBeginning, shouldHeal: false, isDamageControlAssist: false, battleResult: null, individualTargetID: 0, environmentInfo: environmentInfo);
-                                            while (skillTriggerPossibilityCheck != null && skillTriggerPossibilityCheck.Count > 0) { orders.Push(skillTriggerPossibilityCheck.Pop()); }
-                                            orderCondition = new OrderConditionClass(wave: environmentInfo.Wave, turn: environmentInfo.Turn, phase: environmentInfo.Phase, orderNumber: 0, nest: 0, nestOrderNumber: 0);
-                                            battleLog = new BattleLogClass(orderCondition: orderCondition, isNavigation: false, log: log, importance: 1);
+                                            orders: orders, actionType: ActionType.atBeginning, shouldHeal: false, isDamageControlAssist: false, battleResult: null, individualTargetID: 0, nestNumber: 0, environmentInfo: environmentInfo);
+                                            while (skillTriggerPossibilityCheck != null && skillTriggerPossibilityCheck.Count > 0)
+                                            {
+                                                orders.Push(skillTriggerPossibilityCheck.Pop());
+                                                orderCondition = new OrderConditionClass(wave: environmentInfo.Wave, turn: environmentInfo.Turn, phase: environmentInfo.Phase, orderNumber: orderNumber, nest: 0, nestOrderNumber: 0);
+                                                battleLog = new BattleLogClass(orderCondition: orderCondition, isNavigation: false, log: log, importance: 1); orderNumber++;
+                                            }
                                             break;
                                         case 2:
                                             environmentInfo.Phase = 2;
                                             log += new string(' ', 1) + "[Main action phase] \n";
-                                            orderCondition = new OrderConditionClass(wave: environmentInfo.Wave, turn: environmentInfo.Turn, phase: environmentInfo.Phase, orderNumber: 0, nest: 0, nestOrderNumber: 0);
-                                            battleLog = new BattleLogClass(orderCondition: orderCondition, isNavigation: false, log: log, importance: 1);
 
                                             for (int i = 0; i <= aliveCharacters.Count - 1; i++)
                                             {
@@ -376,13 +378,15 @@ namespace BattleEngine
                                                 EffectClass normalAttackEffect = new EffectClass(character: aliveCharacters[i], skill: skillsMasters[14], actionType: ActionType.normalAttack, offenseEffectMagnification: 1.0,
                                                 triggeredPossibility: 1.0, isDamageControlAssistAble: false, usageCount: 1000, veiledFromTurn: 1, veiledToTurn: 20);
                                                 effectList.Add(normalAttackEffect);
-                                                orderCondition.OrderNumber++;
+                                                orderCondition = new OrderConditionClass(wave: environmentInfo.Wave, turn: environmentInfo.Turn, phase: environmentInfo.Phase, orderNumber: 0, nest: 0, nestOrderNumber: 0);
+                                                battleLog = new BattleLogClass(orderCondition: orderCondition, isNavigation: false, log: log, importance: 1);
                                                 orderForSort.Add(new OrderClass(orderCondition: orderCondition, actor: aliveCharacters[i], actionType: ActionType.move, skillEffectProposed: ref effectList,
                                                 actionSpeed: (aliveCharacters[i].Ability.Responsiveness * r.Next(40 + aliveCharacters[i].Ability.Luck, 100)), individualTargetID: -1, isDamageControlAssist: false));
 
 
                                             }
                                             orderForSort.Sort((OrderClass x, OrderClass y) => x.ActionSpeed - y.ActionSpeed);
+                                            orderNumber = orderForSort.Count(); foreach (OrderClass order in orderForSort) { order.OrderCondition.OrderNumber = orderNumber; orderNumber--; }
                                             for (int i = 0; i < orderForSort.Count; i++) { orders.Push(orderForSort[i]); }
                                             break;
                                         case 3:
@@ -493,41 +497,59 @@ namespace BattleEngine
 
                                     OrderStatusClass orderStatus = new OrderStatusClass(); orderStatus.Initialize();
 
-                                    //[[ SKILLS CHECK ]] Counter skills triger.
-                                    skillTriggerPossibilityCheck = SkillTriggerPossibilityCheck(actor: null, effects: effects, characters: characters,
-                                     attackerOrder: order, orders: orders, actionType: ActionType.counter, shouldHeal: false, isDamageControlAssist: false,
-                                        battleResult: battleResult, individualTargetID: order.Actor.UniqueID, environmentInfo: environmentInfo);
-                                    if (skillTriggerPossibilityCheck != null) { orderStatus.CounterSkillCount = skillTriggerPossibilityCheck.Count; }
-                                    while (skillTriggerPossibilityCheck != null && skillTriggerPossibilityCheck.Count > 0) { orders.Push(skillTriggerPossibilityCheck.Pop()); }
-
-                                    //[[ SKILLS CHECK ]] Chain skills trigger.
-                                    skillTriggerPossibilityCheck = SkillTriggerPossibilityCheck(actor: null, effects: effects, characters: characters,
-                                     attackerOrder: order, orders: orders, actionType: ActionType.chain, shouldHeal: false, isDamageControlAssist: false,
-                                      battleResult: battleResult, individualTargetID: order.Actor.UniqueID, environmentInfo: environmentInfo);
-                                    if (skillTriggerPossibilityCheck != null) { orderStatus.ChainSkillCount = skillTriggerPossibilityCheck.Count; }
-                                    while (skillTriggerPossibilityCheck != null && skillTriggerPossibilityCheck.Count > 0) { orders.Push(skillTriggerPossibilityCheck.Pop()); }
+                                    int nestNumber = 0;
+                                    //[[ SKILLS CHECK ]] Damage Control Assist trigger. Note: ActionType independent so ActionType.any!
+                                    Stack<OrderClass> damageControlAssistStack = SkillTriggerPossibilityCheck(actor: null, effects: effects, characters: characters,
+                                        attackerOrder: order, orders: orders, actionType: ActionType.any, shouldHeal: true, isDamageControlAssist: true,
+                                            battleResult: battleResult, individualTargetID: order.Actor.UniqueID, nestNumber: nestNumber, environmentInfo: environmentInfo);
 
                                     //[[ SKILLS CHECK ]] ReAttack skills trigger.
-                                    skillTriggerPossibilityCheck = SkillTriggerPossibilityCheck(actor: null, effects: effects, characters: characters,
-                                     attackerOrder: order, orders: orders, actionType: ActionType.reAttack, shouldHeal: false, isDamageControlAssist: false,
-                                    battleResult: battleResult, individualTargetID: order.Actor.UniqueID, environmentInfo: environmentInfo);
-                                    if (skillTriggerPossibilityCheck != null) { orderStatus.ReAttackSkillCount = skillTriggerPossibilityCheck.Count; }
-                                    while (skillTriggerPossibilityCheck != null && skillTriggerPossibilityCheck.Count > 0) { orders.Push(skillTriggerPossibilityCheck.Pop()); }
+                                    Stack<OrderClass> reAttackStack = SkillTriggerPossibilityCheck(actor: null, effects: effects, characters: characters,
+                                        attackerOrder: order, orders: orders, actionType: ActionType.reAttack, shouldHeal: false, isDamageControlAssist: false,
+                                            battleResult: battleResult, individualTargetID: order.Actor.UniqueID, nestNumber: nestNumber, environmentInfo: environmentInfo);
 
-                                    //[[ SKILLS CHECK ]] Damage Control Assist trigger. Note: ActionType independent so ActionType.any!
-                                    skillTriggerPossibilityCheck = SkillTriggerPossibilityCheck(actor: null, effects: effects, characters: characters,
-                                     attackerOrder: order, orders: orders, actionType: ActionType.any, shouldHeal: true, isDamageControlAssist: true,
-                                    battleResult: battleResult, individualTargetID: order.Actor.UniqueID, environmentInfo: environmentInfo);
-                                    if (skillTriggerPossibilityCheck != null) { orderStatus.DamageControlAssistCount = skillTriggerPossibilityCheck.Count; }
-                                    while (skillTriggerPossibilityCheck != null && skillTriggerPossibilityCheck.Count > 0) { orders.Push(skillTriggerPossibilityCheck.Pop()); }
+                                    //[[ SKILLS CHECK ]] Chain skills trigger.
+                                    Stack<OrderClass> chainStack = SkillTriggerPossibilityCheck(actor: null, effects: effects, characters: characters,
+                                         attackerOrder: order, orders: orders, actionType: ActionType.chain, shouldHeal: false, isDamageControlAssist: false,
+                                          battleResult: battleResult, individualTargetID: order.Actor.UniqueID, nestNumber: nestNumber, environmentInfo: environmentInfo);
 
-                                    //Navigation Logic
-                                    NavigatorSpeechAfterMoveClass navigatorSpeechAfterMove = new NavigatorSpeechAfterMoveClass(navigatorName: navigatorName, order: order,
-                                        characters: characters, effects: effects, orderStatus: orderStatus, turn: turn, r: r);
-                                    log += navigatorSpeechAfterMove.Log;
-                                    log += new string(' ', 2) + "-------------\n";
+                                    //[[ SKILLS CHECK ]] Counter skills triger.
+                                    Stack<OrderClass> counterStack = SkillTriggerPossibilityCheck(actor: null, effects: effects, characters: characters,
+                                     attackerOrder: order, orders: orders, actionType: ActionType.counter, shouldHeal: false, isDamageControlAssist: false,
+                                      battleResult: battleResult, individualTargetID: order.Actor.UniqueID, nestNumber: nestNumber, environmentInfo: environmentInfo);
+
+
+                                    //Push order in reverse. counter -> chain -> reAttack -> Damage control assist
+                                    //Push Counter
+                                    if (counterStack != null) { orderStatus.CounterSkillCount = counterStack.Count; }
+                                    //while (counterStack != null && counterStack.Count > 0) { orders.Push(counterStack.Pop()); nestNumber++; }
+                                    while (counterStack != null && counterStack.Count > 0) { orders.Push(counterStack.Pop()); nestNumber++; }
+
+                                    //Push Chain
+                                    if (chainStack != null) { orderStatus.ChainSkillCount = chainStack.Count; }
+                                    while (chainStack != null && chainStack.Count > 0) { orders.Push(chainStack.Pop()); nestNumber++; }
+
+
+                                    //Push ReAttack
+                                    if (reAttackStack != null) { orderStatus.ReAttackSkillCount = reAttackStack.Count; }
+                                    while (reAttackStack != null && reAttackStack.Count > 0) { orders.Push(reAttackStack.Pop()); nestNumber++; }
+
+                                    //Push Damage Control Assist
+                                    if (damageControlAssistStack != null) { orderStatus.DamageControlAssistCount = damageControlAssistStack.Count; }
+                                    while (damageControlAssistStack != null && damageControlAssistStack.Count > 0) { orders.Push(damageControlAssistStack.Pop()); nestNumber++; }
 
                                     BattleLogClass battleLog = new BattleLogClass(orderCondition: order.OrderCondition, isNavigation: false, log: log, importance: 1);
+                                    battleLogList.Add(battleLog);
+
+
+                                    //Navigation Logic
+                                    string navigationLog = null;
+                                    NavigatorSpeechAfterMoveClass navigatorSpeechAfterMove = new NavigatorSpeechAfterMoveClass(navigatorName: navigatorName, order: order,
+                                        characters: characters, effects: effects, orderStatus: orderStatus, turn: turn, r: r);
+
+                                    navigationLog += navigatorSpeechAfterMove.Log;
+                                    navigationLog += new string(' ', 2) + "-------------\n";
+                                    battleLog = new BattleLogClass(orderCondition: order.OrderCondition, isNavigation: true, log: navigationLog, importance: 1);
                                     battleLogList.Add(battleLog);
 
                                 }  // Until all Characters act.
@@ -563,11 +585,7 @@ namespace BattleEngine
                             battleLogList.Add(battleLog);
                         }
 
-                    } //battleEnd
-                    // //only final battle log display.
-                    //finalLog = log;
-                    //log = null;
-
+                    } //battleEnd                  
                 } //Battle waves
 
                 subLogPerWavesSets[battleWavesSet - 1] += "[Set:" + battleWavesSet + "] Battle count:" + (allyWinCount + enemyWinCount + drawCount) + " Win:" + (allyWinCount) + " lost:" + (enemyWinCount)
@@ -614,10 +632,9 @@ namespace BattleEngine
             //Battle is over.
             foreach (BattleLogClass battleLog in battleLogList)
             {
-                //finalLog += "Nest:" + battleLog.OrderCondition.Nest + " NestOrderNumber:" + battleLog.OrderCondition.NestOrderNumber + " \n" +  battleLog.Log;
-                
-                finalLog += "(" + battleLog.OrderCondition.Nest + ")" + battleLog.Log;
-
+                if (battleLog.IsNavigation == false)
+                { finalLog += "(" + battleLog.OrderCondition.OrderNumber + "-" + battleLog.OrderCondition.Nest + "-" + battleLog.OrderCondition.NestOrderNumber + ")" + battleLog.Log; }
+                else { finalLog += new string(' ', 5) + battleLog.Log; }
             }
 
             finalLog += "------------------------------------\n";
@@ -640,7 +657,7 @@ namespace BattleEngine
         // Skill check method
         public static Stack<OrderClass> SkillTriggerPossibilityCheck(BattleUnit actor, List<EffectClass> effects, List<BattleUnit> characters, OrderClass attackerOrder,
         Stack<OrderClass> orders, ActionType actionType, bool shouldHeal, bool isDamageControlAssist,
-            BattleResultClass battleResult, int individualTargetID, EnvironmentInfoClass environmentInfo)
+            BattleResultClass battleResult, int individualTargetID, int nestNumber, EnvironmentInfoClass environmentInfo)
         {
             if (attackerOrder != null && attackerOrder.IsDamageControlAssist) { return null; } //If previous move is Damage Control Assist, no counter, reattack, chain and Damage control assist is triggered.
             List<EffectClass> rawActionTypeEffects;
@@ -813,25 +830,18 @@ namespace BattleEngine
             Stack<OrderClass> skillsByOrderStack = new Stack<OrderClass>();
             foreach (BattleUnit character in characters)
             {
-                int nestOrderNumber = 0;
                 validEffectsPerActor = validEffects.FindAll(obj => obj.Character == character);
                 if (validEffectsPerActor.Count >= 1)
                 {
-                    int orderNumber = 0;
-                    int nest = 0;
-                    if (attackerOrder != null)
-                    {
-                        orderNumber = attackerOrder.OrderCondition.OrderNumber;
-                        nest = attackerOrder.OrderCondition.Nest;
-                    }
+                    int orderNumber = 0; int nest = 0; if (attackerOrder != null) { orderNumber = attackerOrder.OrderCondition.OrderNumber; nest = attackerOrder.OrderCondition.Nest; }
+
 
                     OrderConditionClass orderCondition = new OrderConditionClass(wave: environmentInfo.Wave, turn: environmentInfo.Turn, phase: environmentInfo.Turn, orderNumber: orderNumber,
-                        nest: nest + 1, nestOrderNumber: nestOrderNumber);
+                        nest: nest + 1, nestOrderNumber: nestNumber);
 
                     skillsByOrder = new OrderClass(orderCondition: orderCondition, actor: character, actionType: actionType, skillEffectProposed: ref validEffectsPerActor, actionSpeed: 0,
                      individualTargetID: individualTargetID, isDamageControlAssist: isDamageControlAssist);
-                    skillsByOrderStack.Push(skillsByOrder);
-                    nestOrderNumber++;
+                    skillsByOrderStack.Push(skillsByOrder); nestNumber++;
                 }
             }
             if (skillsByOrderStack.Count > 0) { return skillsByOrderStack; }

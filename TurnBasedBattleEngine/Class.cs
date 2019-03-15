@@ -564,7 +564,7 @@ namespace BattleEngine
                     string crushedCountText = "Help " + justCrushedAlly[0].Name + " soon,";
                     if (justCrushedAlly.Count >= 2) { crushedCountText = justCrushedAlly.Count + " allys are being crushed." + " Help them soon!"; }
 
-                    this.Log += new string(' ', 5) + navigatorName + ": " + crushedCountText + " " + damageControlAssistCharacterHave[0].Character.Name + "! ";
+                    this.Log += navigatorName + ": " + crushedCountText + " " + damageControlAssistCharacterHave[0].Character.Name + "! ";
                     if (damageControlAssistCharacterHave[0].IsntTriggeredBecause.AfterAllMoved == true) // moved already
                     { this.Log += "You already moved and cannot? \n"; }
                     else { this.Log += "Wait, you said no medic kit left? \n"; }
@@ -581,12 +581,12 @@ namespace BattleEngine
                     else
                     { crushedMedicText = " Now we lost a medic, I wish " + isMedicCrushed[0].Character.Name + " survived."; }
 
-                    this.Log += new string(' ', 5) + navigatorName + ": " + speechText + crushedMedicText + " \n";
+                    this.Log += navigatorName + ": " + speechText + crushedMedicText + " \n";
                 }
                 else if (orderStatus.DamageControlAssistCount > 0)
-                { this.Log += new string(' ', 5) + "(should triggered damage control assist.)  \n"; }
+                { this.Log +=  "(should triggered damage control assist.)  \n"; }
                 else // when happened
-                { this.Log += new string(' ', 5) + "(unexpected..) \n"; }
+                { this.Log += "(unexpected..) \n"; }
             }
 
             // Enemy [Damage Control check]
@@ -605,7 +605,7 @@ namespace BattleEngine
                     default:
                         speechText = "Wow, " + justCrushedEnemy.Count + " enemys are down. " + order.Actor.Name + ", you are amazing!"; break;
                 }
-                this.Log += new string(' ', 5) + navigatorName + ": " + speechText + "\n";
+                this.Log += navigatorName + ": " + speechText + "\n";
             }
         }
 
@@ -632,7 +632,7 @@ namespace BattleEngine
         { OrderCondition = orderCondition; IsNavigation = isNavigation; Importance = importance; Log = log; }
 
         public OrderConditionClass OrderCondition { get; }
-        bool IsNavigation { get; }
+        public bool IsNavigation { get; }
         public int Importance { get; }
         public string Log { get; }
     }

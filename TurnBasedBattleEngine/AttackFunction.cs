@@ -8,7 +8,7 @@ namespace BattleEngine
     // FUNCTION SEGUMENT
     public class AttackFunction
     {
-        public AttackFunction(OrderClass order, List<BattleUnit> characters, Random r)
+        public AttackFunction(OrderClass order, List<BattleUnit> characters, EnvironmentInfoClass environmentInfo)
         {
             string log = null;
             this.BattleResult = new BattleResultClass();
@@ -69,7 +69,7 @@ namespace BattleEngine
                 }
 
                 //Critical control
-                int criticalReduction = 0; if (order.Actor.Combat.CriticalHit >= r.Next(0, 100))
+                int criticalReduction = 0; if (order.Actor.Combat.CriticalHit >= environmentInfo.R.Next(0, 100))
                 { criticalReduction = 50; this.BattleResult.CriticalOrNot = CriticalOrNot.critical; }
                 else { this.BattleResult.CriticalOrNot = CriticalOrNot.nonCritical; } //Critical hit!
 
@@ -125,7 +125,7 @@ namespace BattleEngine
                             }
                         }
                         else { tickets = totalTickets; }// get previous total tickets
-                        int index = r.Next(0, tickets);
+                        int index = environmentInfo.R.Next(0, tickets);
                         targetColumn = targetPossibilityBox[index];
                         totalTickets = tickets;
                         toTarget = survivaledOpponents[targetColumn];
@@ -144,7 +144,7 @@ namespace BattleEngine
                          * (Math.Pow(decayAccuracy, numberOfSuccessAttacks) / decayAccuracy);
 
                         //judge
-                        if (hitPossibility <= r.NextDouble()) { if (toTarget.IsAvoidMoreThanOnce == false) { toTarget.IsAvoidMoreThanOnce = true; } toTarget.Statistics.AvoidCount++; } //Failed!
+                        if (hitPossibility <= environmentInfo.R.NextDouble()) { if (toTarget.IsAvoidMoreThanOnce == false) { toTarget.IsAvoidMoreThanOnce = true; } toTarget.Statistics.AvoidCount++; } //Failed!
                         else //success!
                         {
                             numberOfSuccessAttacks++;
@@ -155,8 +155,8 @@ namespace BattleEngine
                             if (criticalReduction > 0) { criticalMagnification = order.Actor.OffenseMagnification.Critical * toTarget.DefenseMagnification.Critical * skillMagnificationCritical; } //critical
 
                             //Physical Attack damage calculation
-                            double attackDamage = (double)order.Actor.Combat.Attack * r.Next(40 + order.Actor.Ability.Luck, 100) / 100
-                            - (double)toTarget.Combat.Deffense * (1.00 - toTarget.Deterioration) * r.Next(40 + toTarget.Ability.Luck - criticalReduction, 100 - criticalReduction) / 100;
+                            double attackDamage = (double)order.Actor.Combat.Attack * environmentInfo.R.Next(40 + order.Actor.Ability.Luck, 100) / 100
+                            - (double)toTarget.Combat.Deffense * (1.00 - toTarget.Deterioration) * environmentInfo.R.Next(40 + toTarget.Ability.Luck - criticalReduction, 100 - criticalReduction) / 100;
                             if (attackDamage < 0) { attackDamage = 1; }
 
                             //vs Magnification offense

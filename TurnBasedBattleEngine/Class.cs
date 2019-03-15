@@ -97,7 +97,7 @@ namespace BattleEngine
     public class SkillLogicShieldHealClass
     {
         // heal shiled all actor's affiliation characters.
-        public SkillLogicShieldHealClass(OrderClass order, List<BattleUnit> characters, bool isMulti, Random r)
+        public SkillLogicShieldHealClass(OrderClass order, List<BattleUnit> characters, bool isMulti, EnvironmentInfoClass environmentInfo)
         {
             string damageControlAssistText = null;
             if (order.IsDamageControlAssist) { damageControlAssistText = "[damage control assist] "; }
@@ -141,7 +141,7 @@ namespace BattleEngine
             }
             foreach (BattleUnit character in healingCharacters)
             {
-                double healValue = healBase * character.Ability.Generation * r.Next(40 + order.Actor.Ability.Luck, 100) / 100;
+                double healValue = healBase * character.Ability.Generation * environmentInfo.R.Next(40 + order.Actor.Ability.Luck, 100) / 100;
                 character.Combat.ShiledCurrent += (int)healValue;
                 if (order.IsDamageControlAssist && character.Combat.HitPointCurrent == 0) //Damage controled, then heal armor only 1%
                 { character.Combat.HitPointCurrent = (int)(character.Combat.HitPointMax * 0.01); }

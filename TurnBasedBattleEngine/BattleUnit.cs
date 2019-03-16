@@ -15,7 +15,8 @@ namespace BattleEngine
             this.Feature = feature; this.OffenseMagnification = offenseMagnification; this.DefenseMagnification = defenseMagnification; this.SkillMagnification = skillMagnification;
             //Initialize 
             this.Deterioration = 0.0; this.Buff = new BuffClass(); this.IsOptimumTarget = false; this.IsBarrierBrokenJustNow = false;
-            this.IsBarrierExistJustBefore = false; this.IsCrushedJustNow = false; this.IsAvoidMoreThanOnce = false; this.Statistics = new StatisticsCollectionClass();
+            this.IsBarrierExistJustBefore = false; this.IsCrushedJustNow = false; this.IsAvoidMoreThanOnce = false; 
+            this.Statistics = new StatisticsCollectionClass(); this.PermanentStatistics = new StatisticsCollectionClass();
         }
 
 
@@ -174,15 +175,16 @@ namespace BattleEngine
             public ActionSkillClass TriggerPossibility { get; }
         }
 
+
         public class StatisticsCollectionClass
         {
-            public StatisticsCollectionClass() { this.Initialise(); }
+            public StatisticsCollectionClass() { this.Initialize(); }
 
-            public void Initialise()
+            public void Initialize()
             {
-                this.NumberOfCrushed = 0; this.AllActivatedCount = 0; this.AllHitCount = 0; this.AllTotalDealtDamage = 0; this.AllTotalBeTakenDamage = 0;
-                this.CriticalActivatedCount = 0; this.CriticalHitCount = 0; this.CriticalTotalDealtDamage = 0; this.CriticalTotalBeTakenDamage = 0;
-                this.SkillActivatedCount = 0; this.SkillHitCount = 0; this.SkillTotalDealtDamage = 0; this.SkillTotalBeTakenDamage = 0;
+                this.NumberOfCrushed = 0; this.AllActivatedCount = 0; this.AllHitCount = 0; this.AllTotalDealtDamage = 0; this.AllTotalBeenHitCount = 0; this.AllTotalBeTakenDamage = 0;
+                this.CriticalActivatedCount = 0; this.CriticalHitCount = 0; this.CriticalTotalDealtDamage = 0; this.CriticalBeenHitCount = 0; this.CriticalTotalBeTakenDamage = 0;
+                this.SkillActivatedCount = 0; this.SkillHitCount = 0; this.SkillTotalDealtDamage = 0; this.SkillBeenHitCount = 0; this.SkillTotalBeTakenDamage = 0; this.AvoidCount = 0;
             }
 
             public void Avarage(int battleWaves)
@@ -246,6 +248,20 @@ namespace BattleEngine
             public double AvoidCount { get; set; }
         }
 
+        public void SetPermanentStatistics(StatisticsCollectionClass statistics)
+        {
+            PermanentStatistics.NumberOfCrushed += Statistics.NumberOfCrushed; PermanentStatistics.AllActivatedCount += Statistics.AllActivatedCount;
+            PermanentStatistics.AllHitCount += Statistics.AllHitCount; PermanentStatistics.AllTotalDealtDamage += Statistics.AllTotalDealtDamage;
+            PermanentStatistics.AllTotalBeenHitCount += Statistics.AllTotalBeenHitCount; PermanentStatistics.AllTotalBeTakenDamage += Statistics.AllTotalBeTakenDamage;
+            PermanentStatistics.CriticalActivatedCount += Statistics.CriticalActivatedCount; PermanentStatistics.CriticalHitCount += Statistics.CriticalHitCount;
+            PermanentStatistics.CriticalTotalDealtDamage += Statistics.CriticalTotalDealtDamage;
+            PermanentStatistics.CriticalBeenHitCount += Statistics.CriticalBeenHitCount; PermanentStatistics.CriticalTotalBeTakenDamage += Statistics.CriticalTotalBeTakenDamage;
+            PermanentStatistics.SkillActivatedCount += Statistics.SkillActivatedCount; PermanentStatistics.SkillHitCount += Statistics.SkillHitCount;
+            PermanentStatistics.SkillTotalDealtDamage += Statistics.SkillTotalDealtDamage; PermanentStatistics.SkillBeenHitCount += Statistics.SkillBeenHitCount;
+            PermanentStatistics.SkillTotalBeTakenDamage += Statistics.SkillTotalBeTakenDamage; PermanentStatistics.AvoidCount += Statistics.AvoidCount;
+
+        }
+
         public enum Conditions { current, max }
         public int UniqueID { get; }
         public string Name { get; }
@@ -265,6 +281,7 @@ namespace BattleEngine
         public bool IsAvoidMoreThanOnce { get; set; }
         public double Deterioration { get; set; }
         public StatisticsCollectionClass Statistics { get; set; }
+        public StatisticsCollectionClass PermanentStatistics { get; set; }
     }
 
 }

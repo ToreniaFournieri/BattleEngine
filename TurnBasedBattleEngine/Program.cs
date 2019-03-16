@@ -24,7 +24,7 @@ namespace BattleEngine
             FuncBattleConditionsText text = null;
             WipeOutCheck wipeOutCheck = null;
             int seed = (int)DateTime.Now.Ticks; // when you find something wrong, use seed value to Reproduction the situation
-            //int seedEmu = 1210466014;
+            //seed = 1086664070; // Reproduction.
             Random r = new Random(seed);
 
             // System initialize : Do not change them.
@@ -292,7 +292,10 @@ namespace BattleEngine
                         characters[i].Buff.InitializeBuff(); //Buff initialize
                         characters[i].Buff.BarrierRemaining = 0; //Barrier initialize
                         characters[i].Feature.InitializeFeature(); //Feature initialize
+                        characters[i].Statistics.Initialize(); // Initialise
                     }
+                    //foreach (EffectClass effect in effects) { effect.InitializeAccumulation(); }
+
                     EffectInitialize(effects: effects, skillsMasters: skillsMasters, characters: characters); //Effect/Buff initialize
 
                     if (battleWave == battleWaves && battleWavesSet == battleWavesSets) // only last battle display inside.
@@ -430,7 +433,7 @@ namespace BattleEngine
                                     (BattleLogClass BattleLog, BattleResultClass battleResult) result; //BasicAttackFunction basicAttack;
 
                                     //[[ SKILLS CHECK ]] Move skills triger.
-                                    order.SkillDecision(characters: characters);
+                                    order.SkillDecision(characters: characters, environmentInfo: environmentInfo);
 
                                     //effect spend.
                                     if (order.SkillEffectChosen != null)
@@ -581,7 +584,10 @@ namespace BattleEngine
                             battleLogList.Add(battleLog);
                         }
 
-                    } //battleEnd                  
+                    } //battleEnd 
+
+                    for (int i = 0; i < numberOfCharacters; i++) //Shiled, HitPoint initialize
+                    { characters[i].SetPermanentStatistics(statistics: characters[i].Statistics); }// set permanent statistics before initialize statistics.
                 } //Battle waves
 
                 subLogPerWavesSets[battleWavesSet - 1] += "[Set:" + battleWavesSet + "] Battle count:" + (allyWinCount + enemyWinCount + drawCount) + " Win:" + (allyWinCount) + " lost:" + (enemyWinCount)
@@ -604,7 +610,7 @@ namespace BattleEngine
                 if (statisticsReporterFirstBlood.FindAll((obj) => obj.WhichWin == WhichWin.allyWin).Any())
                 {
                     StatisticsReporterFirstBloodClass bestFirstBloodAlly = statisticsReporterFirstBlood.FindAll((obj) => obj.WhichWin == WhichWin.allyWin).OrderByDescending(obj => obj.AllyTotalDealtDamage).First();
-                    logPerWavesSets[battleWavesSet - 1] += "[Best shot]"+ bestFirstBloodAlly.AllyContentText + " "+ bestFirstBloodAlly.BattleLogAlly.OrderCondition + "\n";
+                    logPerWavesSets[battleWavesSet - 1] += "[Best shot]" + bestFirstBloodAlly.AllyContentText + " " + bestFirstBloodAlly.BattleLogAlly.OrderCondition + "\n";
                 }
                 logPerWavesSets[battleWavesSet - 1] += "Enemy info: MVP(times) \n";
                 foreach (var group in statisticsQueryEnemy) { logPerWavesSets[battleWavesSet - 1] += new string(' ', 2) + group.Subj + " (" + group.Count + ")."; }
@@ -614,20 +620,22 @@ namespace BattleEngine
                     StatisticsReporterFirstBloodClass bestFirstBloodEnemy = statisticsReporterFirstBlood.FindAll((obj) => obj.WhichWin == WhichWin.enemyWin).OrderByDescending(obj => obj.EnemyTotalDealtDamage).First();
                     logPerWavesSets[battleWavesSet - 1] += "[Best shot]" + bestFirstBloodEnemy.EnemyContentText + " " + bestFirstBloodEnemy.BattleLogEnemy.OrderCondition + "\n";
                 }
-                //Characters Statistics Collection
-                foreach (BattleUnit character in characters) { character.Statistics.Avarage(battleWaves: battleWaves); } // Avarage Calculation
+                //Characters permanent Statistics Collection
+                foreach (BattleUnit character in characters) { character.PermanentStatistics.Avarage(battleWaves: battleWaves); } // Avarage Calculation
                 logPerWavesSets[battleWavesSet - 1] += "Avarage (critical):\n";
-                foreach (BattleUnit character in characters) { logPerWavesSets[battleWavesSet - 1] += new string(' ', 1) + character.Name + " " + character.Statistics.AllCriticalRatio() + "\n"; }
+                foreach (BattleUnit character in characters) { logPerWavesSets[battleWavesSet - 1] += new string(' ', 1) + character.Name + " " + character.PermanentStatistics.AllCriticalRatio() + "\n"; }
                 logPerWavesSets[battleWavesSet - 1] += "Avarage Skill:\n";
-                foreach (BattleUnit character in characters) { logPerWavesSets[battleWavesSet - 1] += character.Name + " " + character.Statistics.Skill() + "\n"; }
+                foreach (BattleUnit character in characters) { logPerWavesSets[battleWavesSet - 1] += character.Name + " " + character.PermanentStatistics.Skill() + "\n"; }
                 logPerWavesSets[battleWavesSet - 1] += "------------------------------------\n";
 
 
             } // Battle waves set
 
             //Battle is over.
-            foreach (BattleLogClass battleLog in battleLogList)
+            List<BattleLogClass> battleLogDisplayList = battleLogList.FindAll(obj => obj.OrderCondition.Wave == battleWaves); // only last battlelog displayed.
+            foreach (BattleLogClass battleLog in battleLogDisplayList)
             {
+
                 if (battleLog.IsNavigation == false)
                 { finalLog += "(" + battleLog.OrderCondition.Phase + "-" + battleLog.OrderCondition.OrderNumber + "-" + battleLog.OrderCondition.Nest + "-" + battleLog.OrderCondition.NestOrderNumber + ")" + battleLog.Log; }
                 else { finalLog += new string(' ', 5) + battleLog.Log; }

@@ -173,9 +173,14 @@ namespace BattleEngine
         {
             this.Character = character; this.Skill = skill; this.ActionType = actionType; this.OffenseEffectMagnification = offenseEffectMagnification; this.TriggeredPossibility = triggeredPossibility;
             this.IsDamageControlAssistAble = isDamageControlAssistAble; this.UsageCount = usageCount; this.VeiledFromTurn = veiledFromTurn; this.VeiledToTurn = veiledToTurn;
-            this.SpentCount = 0; this.NextAccumulationCount = (int)skill.TriggerBase.AccumulationBaseRate;
+            this.SpentCount = 0; this.AccumulationBaseRate = (int)skill.TriggerBase.AccumulationBaseRate; this.NextAccumulationCount = AccumulationBaseRate;
             this.IsntTriggeredBecause = new IsntTriggeredBecauseClass();
         }
+
+        //public void InitializeAccumulation()
+        //{
+        //    this.NextAccumulationCount = AccumulationBaseRate;
+        //}
 
         public void BuffToCharacter(int currentTurn)
         {
@@ -234,6 +239,7 @@ namespace BattleEngine
         public bool IsDamageControlAssistAble { get; }
         public int UsageCount { get; set; }
         public int SpentCount { get; set; }
+        public int AccumulationBaseRate { get; set; }
         public int NextAccumulationCount { get; set; }
         public int VeiledFromTurn { get; }
         public int VeiledToTurn { get; }
@@ -300,7 +306,7 @@ namespace BattleEngine
         }
 
         // Skill decision, decide best skill in this timming. healAll or healSingle or just do nothing, which move skill should use .
-        public void SkillDecision(List<BattleUnit> characters)
+        public void SkillDecision(List<BattleUnit> characters, EnvironmentInfoClass environmentInfo)
         {
             if (SkillEffectProposed != null) // skill effect proposed valid check
             {
@@ -308,7 +314,7 @@ namespace BattleEngine
 
                 foreach (EffectClass effect in SkillEffectProposed) { if (effect.UsageCount > 0) { validEffects.Add(effect); } }
 
-                if (validEffects.Count == 0) { Console.WriteLine(" no valid skill exist" + this.Actor.Name + " " + this.ActionType); }
+                if (validEffects.Count == 0) { Console.WriteLine(" no valid skill exist" + this.Actor.Name + " " + this.ActionType + " " + environmentInfo.Info()); }
                 else if (validEffects.Count >= 1)// in case more than 2 skills proposed.
                 {
                     List<BattleUnit> healTargets;
@@ -689,6 +695,10 @@ namespace BattleEngine
         public int Phase;
         public int RandomSeed;
         public Random R;
+
+        public string Info() { return "Wave:" + Wave + " Turn:" + Turn + " Phase:" + Phase + " RandomSeed:" + RandomSeed; }
+
     }
+
 
 }

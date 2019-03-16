@@ -1,0 +1,16 @@
+﻿<Properties StartupConfiguration="{E9D8187F-D0D6-4137-9FCA-04FFBD5A493A}|Default">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Class.cs">
+    <Files>
+      <File FileName="Program.cs" Line="473" Column="82" />
+      <File FileName="Class.cs" Line="254" Column="41" />
+      <File FileName="Enumeration.cs" Line="5" Column="28" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.ItemProperties.TurnBasedBattleEngine PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>

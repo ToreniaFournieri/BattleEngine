@@ -466,12 +466,8 @@ namespace BattleEngine
                                         if (battleResult.NumberOfCrushed != 1) { es = "es"; }
                                         string t = order.Actor.Name + "'s " + order.SkillEffectChosen.Skill.Name + ". first blood! total dealt damage:" + battleResult.TotalDeltDamage.WithComma() + " " + battleResult.NumberOfCrushed.WithComma() + " crush" + es + ".";
                                         StatisticsReporterFirstBloodClass setStatisticsReporterFirstBlood = statisticsReporterFirstBlood.FindLast((obj) => obj.BattleWave == battleWave);
-                                        setStatisticsReporterFirstBlood.AllyCharacterName = order.Actor.Name;
-                                        setStatisticsReporterFirstBlood.AllyActionType = order.ActionType;
-                                        setStatisticsReporterFirstBlood.AllyHappenedTurn = turn;
-                                        setStatisticsReporterFirstBlood.AllyCrushedCount = battleResult.NumberOfCrushed;
-                                        setStatisticsReporterFirstBlood.AllyTotalDealtDamage = battleResult.TotalDeltDamage;
-                                        setStatisticsReporterFirstBlood.AllyContentText = t;
+                                        setStatisticsReporterFirstBlood.Set(whichAffiliation: Affiliation.ally, characterName: order.Actor.Name, actionType: order.ActionType, happenedTurn: turn,
+                                            crushedCount: battleResult.NumberOfCrushed, totalDealtDamage: battleResult.TotalDeltDamage, contentText: t);
                                         if (result.BattleLog != null) { setStatisticsReporterFirstBlood.BattleLogAlly = result.BattleLog; }
                                         allyFirstBlood = true;
 
@@ -482,12 +478,8 @@ namespace BattleEngine
                                         if (battleResult.NumberOfCrushed != 1) { es = "es"; }
                                         string t = order.Actor.Name + "'s " + order.SkillEffectChosen.Skill.Name + ". first blood! total dealt damage:" + battleResult.TotalDeltDamage.WithComma() + " " + battleResult.NumberOfCrushed.WithComma() + " crush" + es + ".";
                                         StatisticsReporterFirstBloodClass setStatisticsReporterFirstBlood = statisticsReporterFirstBlood.FindLast((obj) => obj.BattleWave == battleWave);
-                                        setStatisticsReporterFirstBlood.EnemyCharacterName = order.Actor.Name;
-                                        setStatisticsReporterFirstBlood.EnemyActionType = order.ActionType;
-                                        setStatisticsReporterFirstBlood.EnemyHappenedTurn = turn;
-                                        setStatisticsReporterFirstBlood.EnemyCrushedCount = battleResult.NumberOfCrushed;
-                                        setStatisticsReporterFirstBlood.EnemyTotalDealtDamage = battleResult.TotalDeltDamage;
-                                        setStatisticsReporterFirstBlood.EnemyContentText = t;
+                                        setStatisticsReporterFirstBlood.Set(whichAffiliation: Affiliation.enemy, characterName: order.Actor.Name, actionType: order.ActionType, happenedTurn: turn,
+                                        crushedCount: battleResult.NumberOfCrushed, totalDealtDamage: battleResult.TotalDeltDamage, contentText: t);
                                         if (result.BattleLog != null) { setStatisticsReporterFirstBlood.BattleLogEnemy = result.BattleLog; }
                                         enemyFirstBlood = true;
                                     }
@@ -550,10 +542,12 @@ namespace BattleEngine
                                         characters: characters, effects: effects, orderStatus: orderStatus, environmentInfo: environmentInfo);
 
                                     navigationLog += navigatorSpeechAfterMove.Log;
-                                    navigationLog += new string(' ', 2) + "-------------\n";
-                                    battleLog = new BattleLogClass(orderCondition: order.OrderCondition, isNavigation: true, log: navigationLog, importance: 1);
-                                    battleLogList.Add(battleLog);
-
+                                    if (log != null)
+                                    {
+                                        navigationLog += new string(' ', 2) + "-------------\n";
+                                        battleLog = new BattleLogClass(orderCondition: order.OrderCondition, isNavigation: true, log: navigationLog, importance: 1);
+                                        battleLogList.Add(battleLog);
+                                    }
                                 }  // Until all Characters act.
 
                             } // action Phase.

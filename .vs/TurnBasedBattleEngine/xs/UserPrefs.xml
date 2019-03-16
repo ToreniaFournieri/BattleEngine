@@ -1,10 +1,10 @@
 ﻿<Properties StartupConfiguration="{600E319E-5CC7-481E-830C-7FA3F3F9B2A0}|Default">
   <MonoDevelop.Ide.Workbench ActiveDocument="TurnBasedBattleEngine/Program.cs">
     <Files>
-      <File FileName="TurnBasedBattleEngine/Program.cs" Line="510" Column="64" />
-      <File FileName="TurnBasedBattleEngine/AttackFunction.cs" Line="159" Column="118" />
-      <File FileName="TurnBasedBattleEngine/BattleUnit.cs" Line="11" Column="26" />
-      <File FileName="TurnBasedBattleEngine/Class.cs" Line="1" Column="1" />
+      <File FileName="TurnBasedBattleEngine/Program.cs" Line="11" Column="51" />
+      <File FileName="TurnBasedBattleEngine/AttackFunction.cs" Line="42" Column="1" />
+      <File FileName="TurnBasedBattleEngine/BattleUnit.cs" Line="175" Column="10" />
+      <File FileName="TurnBasedBattleEngine/Class.cs" Line="245" Column="18" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />

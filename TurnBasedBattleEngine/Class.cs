@@ -250,6 +250,24 @@ namespace BattleEngine
             this.AllyTotalDealtDamage = 0; this.AllyContentText = "No first Blood."; this.EnemyCharacterName = "none"; this.EnemyActionType = ActionType.none;
             this.EnemyHappenedTurn = 0; this.EnemyCrushedCount = 0; this.EnemyTotalDealtDamage = 0; this.EnemyContentText = "No first Blood."; this.WhichWin = WhichWin.Draw;
         }
+
+        public void Set(Affiliation whichAffiliation, string characterName, ActionType actionType, int happenedTurn, int crushedCount, int totalDealtDamage, string contentText)
+        {
+            switch (whichAffiliation)
+            {
+                case Affiliation.ally:
+                    AllyActionType = actionType; AllyCharacterName = characterName; AllyHappenedTurn = happenedTurn; AllyCrushedCount = crushedCount; AllyTotalDealtDamage = totalDealtDamage; AllyContentText = contentText;
+                    break;
+                case Affiliation.enemy:
+                    EnemyActionType = actionType; EnemyCharacterName = characterName; EnemyHappenedTurn = happenedTurn; EnemyCrushedCount = crushedCount; EnemyTotalDealtDamage = totalDealtDamage; EnemyContentText = contentText;
+                    break;
+                case Affiliation.none:
+                    Console.WriteLine("Affiliation.none is not expected in StatisticsReporterFirstBloodClass.");
+                    break;
+            }
+
+        }
+
         public int BattleWave { get; set; }
         public BattleLogClass BattleLogAlly { get; set; }
         public string AllyCharacterName { get; set; }

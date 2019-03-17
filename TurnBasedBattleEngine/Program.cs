@@ -114,19 +114,19 @@ namespace BattleEngine
             thermal: 1.0, heal: 3.0, numberOfAttacks: 1.0, critical: 1.5, accuracy: 2.0, optimumRangeMin: 0.5, optimumRangeMax: 2.0);
 
             TriggerTargetClass triggerTargetNone = new TriggerTargetClass(actionType: ActionType.none, afterAllMoved: false, counter: false, chain: false, reAttack: false, heal: false, move: false,
-             majestyAttackType: AttackType.any, critical: CriticalOrNot.any, whoCrushed: ActorOrTargetUnit.no, onlyWhenBeenHitMoreThanOnce: false, onlyWhenAvoidMoreThanOnce: false);
+             optimumRange: Range.any, majestyAttackType: AttackType.any, critical: CriticalOrNot.any, whoCrushed: ActorOrTargetUnit.no, onlyWhenBeenHitMoreThanOnce: false, onlyWhenAvoidMoreThanOnce: false);
             TriggerTargetClass triggerTargetDamageControl = new TriggerTargetClass(actionType: ActionType.any, afterAllMoved: false, counter: true, chain: true, reAttack: true, heal: false, move: true,
-             majestyAttackType: AttackType.any, critical: CriticalOrNot.any, whoCrushed: ActorOrTargetUnit.no, onlyWhenBeenHitMoreThanOnce: false, onlyWhenAvoidMoreThanOnce: false);
+             optimumRange: Range.any, majestyAttackType: AttackType.any, critical: CriticalOrNot.any, whoCrushed: ActorOrTargetUnit.no, onlyWhenBeenHitMoreThanOnce: false, onlyWhenAvoidMoreThanOnce: false);
             TriggerTargetClass triggerTargetIndependent = new TriggerTargetClass(actionType: ActionType.any, afterAllMoved: true, counter: false, chain: false, reAttack: false, heal: false, move: false,
-             majestyAttackType: AttackType.any, critical: CriticalOrNot.any, whoCrushed: ActorOrTargetUnit.no, onlyWhenBeenHitMoreThanOnce: false, onlyWhenAvoidMoreThanOnce: false);
+             optimumRange: Range.any, majestyAttackType: AttackType.any, critical: CriticalOrNot.any, whoCrushed: ActorOrTargetUnit.no, onlyWhenBeenHitMoreThanOnce: false, onlyWhenAvoidMoreThanOnce: false);
             TriggerTargetClass triggerTargetCounter = new TriggerTargetClass(actionType: ActionType.any, afterAllMoved: true, counter: true, chain: true, reAttack: true, heal: false, move: true,
-             majestyAttackType: AttackType.any, critical: CriticalOrNot.nonCritical, whoCrushed: ActorOrTargetUnit.no, onlyWhenBeenHitMoreThanOnce: true, onlyWhenAvoidMoreThanOnce: false);
+             optimumRange: Range.within, majestyAttackType: AttackType.any, critical: CriticalOrNot.nonCritical, whoCrushed: ActorOrTargetUnit.no, onlyWhenBeenHitMoreThanOnce: true, onlyWhenAvoidMoreThanOnce: false);
             TriggerTargetClass triggerTargetChainCounter = new TriggerTargetClass(actionType: ActionType.counter, afterAllMoved: false, counter: true, chain: false, reAttack: false, heal: false, move: true,
-             majestyAttackType: AttackType.any, critical: CriticalOrNot.any, whoCrushed: ActorOrTargetUnit.no, onlyWhenBeenHitMoreThanOnce: false, onlyWhenAvoidMoreThanOnce: false);
+             optimumRange: Range.any, majestyAttackType: AttackType.any, critical: CriticalOrNot.any, whoCrushed: ActorOrTargetUnit.no, onlyWhenBeenHitMoreThanOnce: false, onlyWhenAvoidMoreThanOnce: false);
             TriggerTargetClass triggerTargetCriticalReAttack = new TriggerTargetClass(actionType: ActionType.any, afterAllMoved: true, counter: false, chain: true, reAttack: false, heal: false, move: true,
-             majestyAttackType: AttackType.any, critical: CriticalOrNot.critical, whoCrushed: ActorOrTargetUnit.no, onlyWhenBeenHitMoreThanOnce: false, onlyWhenAvoidMoreThanOnce: false);
+             optimumRange: Range.any, majestyAttackType: AttackType.any, critical: CriticalOrNot.critical, whoCrushed: ActorOrTargetUnit.no, onlyWhenBeenHitMoreThanOnce: false, onlyWhenAvoidMoreThanOnce: false);
             TriggerTargetClass triggerTargetInterrupt = new TriggerTargetClass(actionType: ActionType.interrupt, afterAllMoved: false, counter: true, chain: false, reAttack: false, heal: false, move: false,
-             majestyAttackType: AttackType.any, critical: CriticalOrNot.any, whoCrushed: ActorOrTargetUnit.no, onlyWhenBeenHitMoreThanOnce: false, onlyWhenAvoidMoreThanOnce: false);
+             optimumRange: Range.any, majestyAttackType: AttackType.any, critical: CriticalOrNot.any, whoCrushed: ActorOrTargetUnit.no, onlyWhenBeenHitMoreThanOnce: false, onlyWhenAvoidMoreThanOnce: false);
 
             BuffTargetParameterClass buffTargetNone = new BuffTargetParameterClass(targetType: TargetType.none, barrierRemaining: 0, defenseMagnification: 1.0, mobilityMagnification: 1.0,
             attackMagnification: 1.0, accuracyMagnification: 1.0, criticalHitRateMagnification: 1.0, numberOfAttackMagnification: 1.0, rangeMinCorrection: 0, rangeMaxCorrection: 0);
@@ -772,6 +772,35 @@ namespace BattleEngine
                     { effect.IsntTriggeredBecause.TriggerTargetMove = true; continue; } // move skill reaction
                 }
 
+
+                if (effect.Skill.TriggerTarget.OptimumRange != Range.any && attackerOrder != null) // within OptimumRange check
+                {
+                    List<BattleUnit> aliveActorSide;
+                    List<BattleUnit> survivaledOpponents;
+                    aliveActorSide = characters.FindAll(character1 => character1.Affiliation == effect.Character.Affiliation && character1.Combat.HitPointCurrent > 0);
+                    int aliveAttackerIndex = aliveActorSide.IndexOf(effect.Character);
+                    int minTargetOptimumRange = (int)(effect.Character.Combat.MinRange * effect.Skill.Magnification.OptimumRangeMin) - aliveAttackerIndex;
+                    int maxTargetOptimumRange = (int)(effect.Character.Combat.MaxRange * effect.Skill.Magnification.OptimumRangeMax) - aliveAttackerIndex;
+                    if (effect.Character.Affiliation == Affiliation.ally) { counterAffiliation = Affiliation.enemy; } else { counterAffiliation = Affiliation.ally; }
+                    survivaledOpponents = characters.FindAll(character1 => character1.Combat.HitPointCurrent > 0 && character1.Affiliation == counterAffiliation);
+                    survivaledOpponents.Sort((x, y) => x.UniqueID - y.UniqueID);
+                    int attackerIndex = survivaledOpponents.IndexOf(attackerOrder.Actor);
+
+                    //Console.WriteLine( effect.Character.Name + " minTargetOptimumRange:" + minTargetOptimumRange + " maxTargetOptimumRange:" + maxTargetOptimumRange + " attackerIndex" + attackerIndex
+                     //+ " survivaledOpponents.Count" + survivaledOpponents.Count());
+
+                    switch (effect.Skill.TriggerTarget.OptimumRange) //Optimum Range check.
+                    {
+                        case Range.any: break;
+                        case Range.within: if (attackerIndex >= minTargetOptimumRange && attackerIndex <= maxTargetOptimumRange) { break; } else { continue; }
+                        case Range.without: if (attackerIndex >= minTargetOptimumRange && attackerIndex <= maxTargetOptimumRange) { continue; } else { break; }
+                    }
+                    Console.WriteLine(environmentInfo.Turn +" PASSED "+effect.Character.Name + " minTargetOptimumRange:" + minTargetOptimumRange + " maxTargetOptimumRange:" + maxTargetOptimumRange + " attackerIndex" + attackerIndex
+ + " survivaledOpponents.Count" + survivaledOpponents.Count());
+
+                }
+
+
                 // AttackType MajestyAttackType NO IMPLEMENTATION.
 
                 if (effect.Skill.TriggerTarget.Critical != CriticalOrNot.any)
@@ -838,7 +867,6 @@ namespace BattleEngine
                 if (validEffectsPerActor.Count >= 1)
                 {
                     int orderNumber = 0; int nest = 0; if (attackerOrder != null) { orderNumber = attackerOrder.OrderCondition.OrderNumber; nest = attackerOrder.OrderCondition.Nest; }
-
 
                     OrderConditionClass orderCondition = new OrderConditionClass(wave: environmentInfo.Wave, turn: environmentInfo.Turn, phase: environmentInfo.Phase, orderNumber: orderNumber,
                         nest: nest + 1, nestOrderNumber: nestNumber);

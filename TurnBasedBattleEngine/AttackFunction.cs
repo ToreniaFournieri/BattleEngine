@@ -90,14 +90,14 @@ namespace BattleEngine
                 }
 
                 // Indivisual attack routine
+                List<BattleUnit> survivaledOpponents = opponents.FindAll(character1 => character1.Combat.HitPointCurrent > 0);
 
                 for (int numberOfAttacks = 1; numberOfAttacks <= (int)(order.Actor.Combat.NumberOfAttacks * skillMagnificationNumberOfAttacks); numberOfAttacks++)
                 {
                     //Target individual oppornet per each number of attack.
                     int tickets = 0;
-                    List<BattleUnit> survivaledOpponents = opponents.FindAll(character1 => character1.Combat.HitPointCurrent > 0);
-
                     if (survivaledOpponents.Count == 0) { continue; }//enemy all wipe out
+                    survivaledOpponents.Sort((x, y) => x.UniqueID - y.UniqueID);
                     BattleUnit toTarget = null;
                     if (order.SkillEffectChosen.Skill.Magnification.AttackTarget == TargetType.multi)
                     {
@@ -108,18 +108,18 @@ namespace BattleEngine
                             double basicTargetRatio = 2.0 / 3.0;     //Tiar 1: Basic Target ratio
                             double optimumTargetRatio = 1.0 / 3.0;     //Tiar 2: Optinum Target ratio
                             double optimumTargetBonus = 0;
-                            for (int opponent = 1; opponent <= survivaledOpponents.Count; opponent++)
+                            for (int opponent = 0; opponent < survivaledOpponents.Count; opponent++)
                             {
                                 if (opponent >= minTargetOptimumRange && opponent <= maxTargetOptimumRange)
                                 {
                                     optimumTargetBonus = optimumTargetRatio / (1 + maxTargetOptimumRange - minTargetOptimumRange);
-                                    survivaledOpponents[opponent - 1].IsOptimumTarget = true;
+                                    survivaledOpponents[opponent].IsOptimumTarget = true;
                                 }
-                                else { survivaledOpponents[opponent - 1].IsOptimumTarget = false; }
+                                else { survivaledOpponents[opponent].IsOptimumTarget = false; }
                                 int targetPossibilityTicket = (int)((basicTargetRatio / Math.Pow(2.0, opponent) + optimumTargetBonus) * 50);
-                                targetPossibilityTicket += (int)(survivaledOpponents[opponent - 1].Feature.HateCurrent);// add Hate value 
+                                targetPossibilityTicket += (int)(survivaledOpponents[opponent].Feature.HateCurrent);// add Hate value 
                                 if (targetPossibilityTicket == 0) { targetPossibilityTicket = 1; }//at leaset one chance to hit.
-                                for (int ticket = tickets; ticket <= targetPossibilityTicket + tickets; ticket++) { targetPossibilityBox.Add(opponent - 1); } //Put tickets into Box with opponent column number (expected: column recalculated when they crushed)
+                                for (int ticket = tickets; ticket <= targetPossibilityTicket + tickets; ticket++) { targetPossibilityBox.Add(opponent); } //Put tickets into Box with opponent column number (expected: column recalculated when they crushed)
                                 tickets += targetPossibilityTicket;
                             }
                         }
@@ -130,8 +130,19 @@ namespace BattleEngine
                         toTarget = survivaledOpponents[targetColumn];
                     }
                     else if (order.SkillEffectChosen.Skill.Magnification.AttackTarget == TargetType.single)// if individual target exist, choose he/she.
-                    { toTarget = opponents.Find(character1 => character1.UniqueID == order.IndividualTargetID); }
-                    else { Console.WriteLine("unexpected. basic attack function, targetType is not single nor multi. seed:" + environmentInfo.RandomSeed + " " + order.OrderCondition ); }
+                    {
+                        if (survivaledOpponents.Count == 0) { continue; }//enemy all wipe out
+                        for (int opponent = 0; opponent < survivaledOpponents.Count; opponent++)
+                        {
+                            if (opponent >= minTargetOptimumRange && opponent <= maxTargetOptimumRange) { survivaledOpponents[opponent].IsOptimumTarget = true; }
+                            else { survivaledOpponents[opponent].IsOptimumTarget = false; }
+                        }
+                        toTarget = opponents.Find(character1 => character1.UniqueID == order.IndividualTargetID);
+                        Console.WriteLine(environmentInfo.Turn + " inAttack " + order.Actor.Name + " minTargetOptimumRange:" + minTargetOptimumRange + " maxTargetOptimumRange:"
+                        + maxTargetOptimumRange + " to " + toTarget.Name + " isOptimumTarget?" + toTarget.IsOptimumTarget + " survivaledOpponents.Count" + survivaledOpponents.Count());
+
+                    }
+                    else { Console.WriteLine("unexpected. basic attack function, targetType is not single nor multi. seed:" + environmentInfo.RandomSeed + " " + order.OrderCondition); }
 
                     isNeedCreateTargetPossibilityBox = false;
 

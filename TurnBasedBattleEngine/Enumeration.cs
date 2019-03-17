@@ -11,6 +11,7 @@ namespace BattleEngine
     public enum TargetType { self, single, multi, none }
     public enum CriticalOrNot { critical, nonCritical, any }
     public enum ActorOrTargetUnit { actorUnit, targetUnit, no }
+    public enum Range { within, without, any }
     public enum WhichWin { allyWin, enemyWin, Draw }
     public enum SkillName
     {

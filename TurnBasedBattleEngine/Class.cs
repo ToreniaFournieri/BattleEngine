@@ -488,10 +488,10 @@ namespace BattleEngine
     public class TriggerTargetClass
     {
         public TriggerTargetClass(ActionType actionType, bool afterAllMoved, bool counter, bool chain,
-         bool reAttack, bool heal, bool move, AttackType majestyAttackType, CriticalOrNot critical, ActorOrTargetUnit whoCrushed, bool onlyWhenBeenHitMoreThanOnce, bool onlyWhenAvoidMoreThanOnce)
+         bool reAttack, bool heal, bool move, Range optimumRange, AttackType majestyAttackType, CriticalOrNot critical, ActorOrTargetUnit whoCrushed, bool onlyWhenBeenHitMoreThanOnce, bool onlyWhenAvoidMoreThanOnce)
         {
             this.ActionType = actionType; this.AfterAllMoved = afterAllMoved; this.Counter = counter; this.Chain = chain; this.ReAttack = reAttack; this.Heal = Heal;
-            this.Move = move; this.MajestyAttackType = majestyAttackType; this.Critical = critical; this.WhoCrushed = whoCrushed;
+            this.Move = move; this.OptimumRange = optimumRange; this.MajestyAttackType = majestyAttackType; this.Critical = critical; this.WhoCrushed = whoCrushed;
             this.OnlyWhenBeenHitMoreThanOnce = onlyWhenBeenHitMoreThanOnce; this.OnlyWhenAvoidMoreThanOnce = onlyWhenAvoidMoreThanOnce;
         }
 
@@ -502,6 +502,7 @@ namespace BattleEngine
         public bool ReAttack { get; }
         public bool Heal { get; }
         public bool Move { get; }
+        public Range OptimumRange { get; }
         public AttackType MajestyAttackType { get; }
         public CriticalOrNot Critical { get; }
         public ActorOrTargetUnit WhoCrushed { get; }
@@ -615,6 +616,7 @@ namespace BattleEngine
                 else // when happened
                 { this.Log += "(unexpected..) \n"; }
             }
+            
 
             // Enemy [Damage Control check]
             List<BattleUnit> justCrushedEnemy = characters.FindAll(obj => obj.Affiliation == Affiliation.enemy && obj.IsCrushedJustNow == true);

@@ -138,11 +138,8 @@ namespace BattleEngine
                             else { survivaledOpponents[opponent].IsOptimumTarget = false; }
                         }
                         toTarget = opponents.Find(character1 => character1.UniqueID == order.IndividualTargetID);
-                        Console.WriteLine(environmentInfo.Turn + " inAttack " + order.Actor.Name + " minTargetOptimumRange:" + minTargetOptimumRange + " maxTargetOptimumRange:"
-                        + maxTargetOptimumRange + " to " + toTarget.Name + " isOptimumTarget?" + toTarget.IsOptimumTarget + " survivaledOpponents.Count" + survivaledOpponents.Count());
-
                     }
-                    else { Console.WriteLine("unexpected. basic attack function, targetType is not single nor multi. seed:" + environmentInfo.RandomSeed + " " + order.OrderCondition); }
+                    else { Console.WriteLine("unexpected. basic attack function, targetType is not single nor multi. info:" + environmentInfo.Info()  + " " + order.OrderCondition); }
 
                     isNeedCreateTargetPossibilityBox = false;
 

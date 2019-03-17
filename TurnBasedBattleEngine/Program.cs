@@ -786,18 +786,12 @@ namespace BattleEngine
                     survivaledOpponents.Sort((x, y) => x.UniqueID - y.UniqueID);
                     int attackerIndex = survivaledOpponents.IndexOf(attackerOrder.Actor);
 
-                    //Console.WriteLine( effect.Character.Name + " minTargetOptimumRange:" + minTargetOptimumRange + " maxTargetOptimumRange:" + maxTargetOptimumRange + " attackerIndex" + attackerIndex
-                     //+ " survivaledOpponents.Count" + survivaledOpponents.Count());
-
                     switch (effect.Skill.TriggerTarget.OptimumRange) //Optimum Range check.
                     {
                         case Range.any: break;
                         case Range.within: if (attackerIndex >= minTargetOptimumRange && attackerIndex <= maxTargetOptimumRange) { break; } else { continue; }
                         case Range.without: if (attackerIndex >= minTargetOptimumRange && attackerIndex <= maxTargetOptimumRange) { continue; } else { break; }
                     }
-                    Console.WriteLine(environmentInfo.Turn +" PASSED "+effect.Character.Name + " minTargetOptimumRange:" + minTargetOptimumRange + " maxTargetOptimumRange:" + maxTargetOptimumRange + " attackerIndex" + attackerIndex
- + " survivaledOpponents.Count" + survivaledOpponents.Count());
-
                 }
 
 
